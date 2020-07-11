@@ -9,28 +9,27 @@ function mapState(state, ownProps) {
     const answer = state[field];
     return {
         answer: answer
-    }
+    };
 }
 
 class FreeInput extends Component {
     constructor(props) {
         super(props);
         const { field, dispatch, regex } = this.props;
-        dispatch(actionCreators.edit({[field]: ''}));
-        this.state = { ...this.state, regex: new RegExp(regex) };
+        dispatch(actionCreators.edit({ [field]: '' }));
+        this.state = { regex: new RegExp(regex) };
     }
 
     onChangeText = (text) => {
         const { regex } = this.state;
         if (regex.test(text)) {
             const { field, dispatch } = this.props;
-            dispatch(actionCreators.edit({[field]: text}));
+            dispatch(actionCreators.edit({ [field]: text }));
         }
     }
 
     render() {
-        const { content, placeholder } = this.props;
-        const { answer } = this.state;
+        const { content, placeholder, answer } = this.props;
 
         return (
             <View style={styles.container}>
@@ -58,8 +57,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     input: {
-      padding: 15,
-      height: 50
+        padding: 15,
+        height: 50
     }
 });
 

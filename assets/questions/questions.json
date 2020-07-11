@@ -1,0 +1,1 @@
+[{"type":"freeInput","content":"Firstquestion?","field":"firstQuestion","placeholder":"Sampleplaceholder","regex":".*"},{"type":"multipleChoice","content":"Secondquestion?","field":"secondQuestion","reset":false,"data":[{"id":0,"text":"View"},{"id":1,"text":"Text"},{"id":2,"text":"Image"},{"id":3,"text":"ScrollView"},{"id":4,"text":"ListView"}]}]

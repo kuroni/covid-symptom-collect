@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { TouchableNativeFeedback, FlatList, StyleSheet, View, Text } from 'react-native';
+import { TouchableOpacity, FlatList, StyleSheet, View, Text } from 'react-native';
 
 import { actionCreators } from '../../helper/store.js';
 
@@ -9,7 +9,7 @@ function mapState(state, ownProps) {
     const answer = state[field];
     return {
         answer: answer
-    }
+    };
 }
 
 class MultipleChoice extends Component {
@@ -20,10 +20,10 @@ class MultipleChoice extends Component {
     }
 
     onPressItem = ({ id }) => {
-        let { answer } = this.state;
-        const { reset } = this.props;
+        let { answer } = this.props;
+        const { reset, dispatch, field } = this.props;
         if (reset) {
-            answer &= (1 << id)
+            answer &= (1 << id);
         }
         answer ^= (1 << id);
         dispatch(actionCreators.edit({ [field]: answer }));
@@ -31,17 +31,17 @@ class MultipleChoice extends Component {
 
     renderItem = ({ item }) => {
         const { id } = item;
-        const appear = (this.state.answer >> id & 1) == 1;
+        const appear = (this.props.answer >> id & 1) == 1;
 
         return (
-            <TouchableNativeFeedback
+            <TouchableOpacity
                 style={appear ? styles.rowOn : styles.rowOff}
                 onPress={() => this.onPressItem(item)}
             >
                 <Text>
-                    title={item.text}
+                    {item.text}
                 </Text>
-            </TouchableNativeFeedback>
+            </TouchableOpacity>
         );
     }
 
