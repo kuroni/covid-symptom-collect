@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { TouchableOpacity, FlatList, StyleSheet, View, Text } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 
 import { actionCreators } from '../../helper/store.js';
 
@@ -19,7 +19,7 @@ class MultipleChoice extends Component {
         dispatch(actionCreators.edit({ [field]: 0 }));
     }
 
-    onPressItem = ({ id }) => {
+    onPressItem = (id) => {
         let { answer } = this.props;
         const { reset, dispatch, field } = this.props;
         if (reset) {
@@ -29,17 +29,16 @@ class MultipleChoice extends Component {
         dispatch(actionCreators.edit({ [field]: answer }));
     }
 
-    renderItem = ({ item }) => {
-        const { id } = item;
+    renderItem = (item, id) => {
         const appear = (this.props.answer >> id & 1) == 1;
 
         return (
             <TouchableOpacity
                 style={appear ? styles.rowOn : styles.rowOff}
-                onPress={() => this.onPressItem(item)}
+                onPress={() => this.onPressItem(id)}
             >
                 <Text>
-                    {item.text}
+                    {item}
                 </Text>
             </TouchableOpacity>
         );
@@ -53,11 +52,7 @@ class MultipleChoice extends Component {
                 <Text style={styles.title}>
                     {content}
                 </Text>
-                <FlatList
-                    data={data}
-                    renderItem={this.renderItem}
-                    keyExtractor={({ id }) => id}
-                />
+                {data.map((item, id) => this.renderItem(item, id))}
             </View>
         );
     }
