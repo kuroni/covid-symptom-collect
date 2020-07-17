@@ -10,12 +10,12 @@ const database = new Storage({
 
 database.save({
     key: 'user',
-    id: 1001,
+    id: 1,
     data: {
-        id: 1001,
+        id: 1,
         name: 'Trung Dang',
         data: '2020/07/15'
     }
-})
+});
 
 export default database;

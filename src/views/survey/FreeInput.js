@@ -41,7 +41,6 @@ class FreeInput extends Component {
                     value={answer}
                     placeholder={placeholder}
                     onChangeText={this.onChangeText}
-                    onSubmitEditing={this.onSubmitEditing}
                 />
             </View>
         );
