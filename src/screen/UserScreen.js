@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, StyleSheet, View, Button, TouchableOpacity, TextInput } from 'react-native';
 import Modal from 'react-native-modal';
 
-import database from '../helper/database.js';
+import storage from '../helper/storage.js';
 
 export default class UserScreen extends Component {
     state = {
@@ -12,8 +12,8 @@ export default class UserScreen extends Component {
         users: null
     };
 
-    fetchFromDatabase = () => {
-        database.getAllDataForKey('user')
+    fetchFromStorage = () => {
+        storage.getAllDataForKey('users')
             .then(users => {
                 this.setState({ users: users });
             })
@@ -21,15 +21,12 @@ export default class UserScreen extends Component {
                 switch (err.name) {
                     case 'NotFoundError':
                         this.setState({ users: {} });
-                        break;
-                    default:
-                        console.log('database error: ' + err.name);
                 }
             });
     }
 
     componentDidMount() {
-        this.props.navigation.addListener('didFocus', this.fetchFromDatabase);
+        this.props.navigation.addListener('didFocus', this.fetchFromStorage);
     }
 
     renderChild = (user) => {
@@ -48,26 +45,26 @@ export default class UserScreen extends Component {
     }
 
     addUser = () => {
-        for (const i = 1; i <= 6; i++) {
+        for (let i = 1; i <= 6; i++) {
             let valid = true;
-            for (const user in this.state.users) {
+            for (const user of this.state.users) {
                 if (user.id == i) {
                     valid = false;
                     break;
                 }
             }
             if (valid) {
-                database.save({
-                    key: 'user',
+                storage.save({
+                    key: 'users',
                     id: i,
                     data: {
                         id: i,
                         name: this.state.newName,
-                        data: '2020/07/15'
+                        data: new Date()
                     }
                 }).then(() => {
                     this.setState({ newName: '', highlightedID: 0, dialogType: 0 });
-                    this.fetchFromDatabase();
+                    this.fetchFromStorage();
                 });
                 return;
             }
@@ -75,10 +72,10 @@ export default class UserScreen extends Component {
     }
 
     removeUser = () => {
-        database.remove({ key: 'user', id: this.state.highlightedID })
+        storage.remove({ key: 'users', id: this.state.highlightedID })
             .then(() => {
                 this.setState({ dialogType: 0, highlightedID: 0 });
-                this.fetchFromDatabase();
+                this.fetchFromStorage();
             });
     }
 
@@ -94,7 +91,7 @@ export default class UserScreen extends Component {
         return (
             <View>
                 {users.map(user => this.renderChild(user))}
-                <Modal isVisible={dialogType == 1}>
+                <Modal isVisible={dialogType == 1 && users.length < 6}>
                     <View style={{ flex: 1 }}>
                         <Text>Please input user's nickname</Text>
                         <TextInput
@@ -116,8 +113,10 @@ export default class UserScreen extends Component {
                     <Button
                         title="Go to Survey!"
                         onPress={() => {
-                            this.setState({ highlightedID: 0 });
-                            this.props.navigation.navigate('Survey', { userid: highlightedID });
+                            if (highlightedID != 0) {
+                                this.setState({ highlightedID: 0 });
+                                this.props.navigation.navigate('Survey', { userid: highlightedID });
+                            }
                         }}
                     />
                     <Button

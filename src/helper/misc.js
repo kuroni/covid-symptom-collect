@@ -1,5 +1,3 @@
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
+export function getFullDate(date) {
+    return '' + date.getYear() + date.getMonth() + date.getDate();
 }

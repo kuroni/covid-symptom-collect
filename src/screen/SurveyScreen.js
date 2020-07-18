@@ -5,15 +5,41 @@ import { ScrollView, StyleSheet, Button } from 'react-native';
 import MultipleChoice from '../views/survey/MultipleChoice';
 import FreeInput from '../views/survey/FreeInput';
 import store, { actionCreators } from '../helper/store';
+import storage from '../helper/storage';
 import database from '../helper/database';
 
 class SurveyScreen extends Component {
+    state = {
+        questions: []
+    }
+
     submit = () => {
         const { dispatch, navigation } = this.props;
-        console.log(store.getState());
+        const { userid } = navigation.state.params;
+        database.collection("users").add(store.getState());
         dispatch(actionCreators.clear());
         navigation.goBack();
         navigation.navigate('End');
+        storage.load({ key: 'users', id: userid })
+            .then(ret => storage.save({
+                key: 'users',
+                id: userid,
+                data: {
+                    ...ret,
+                    data: new Date()
+                }
+            }));
+    }
+
+    componentDidMount() {
+        const doc = database.doc('config/questions');
+        doc.get().then(snapshot => {
+            this.setState({ questions: snapshot.data().questions });
+        });
+        doc.onSnapshot(snapshot => {
+            this.setState({ questions: snapshot.data().questions });
+        });
+
     }
 
     renderChild = child => {
@@ -49,11 +75,9 @@ class SurveyScreen extends Component {
     }
 
     render() {
-        database.remove({ key: 'user', id: 1001 });
-        const children = JSON.parse('[{"type": "freeInput","content": "First question?","field": "firstQuestion","placeholder": "Sample place holder","regex": ".*"},{"type": "multipleChoice","content": "Second question?","field": "secondQuestion","reset": false,"data": ["Cough","Sneeze","Fever","Fatigue","Loss of taste"]}]');
         return (
             <ScrollView style={styles.container}>
-                {children.map(child => this.renderChild(child))}
+                {this.state.questions.map(child => this.renderChild(child))}
                 <Button title="Submit" onPress={() => this.submit()} />
             </ScrollView>
         );

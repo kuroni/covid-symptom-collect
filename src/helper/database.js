@@ -1,21 +1,17 @@
-import Storage from 'react-native-storage';
-import AsyncStorage from '@react-native-community/async-storage';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 
-const database = new Storage({
-    size: 1000,
-    storageBackend: AsyncStorage,
-    defaultExpires: null,
-    enableCache: true
-});
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyBgw1TM-bPmqL9cPvev_JXNe2cfBHVGDlY",
+    authDomain: "covid-symptom-colect.firebaseapp.com",
+    databaseURL: "https://covid-symptom-colect.firebaseio.com/",
+    projectId: "covid-symptom-colect",
+    storageBucket: "covid-symptom-colect.appspot.com",
+};
 
-database.save({
-    key: 'user',
-    id: 1,
-    data: {
-        id: 1,
-        name: 'Trung Dang',
-        data: '2020/07/15'
-    }
-});
+firebase.initializeApp(firebaseConfig);
+
+const database = firebase.firestore();
 
 export default database;

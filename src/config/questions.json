@@ -1,1 +1,22 @@
-[{"type": "freeInput","content": "First question?","field": "firstQuestion","placeholder": "Sample place holder","regex": ".*"},{"type": "multipleChoice","content": "Second question?","field": "secondQuestion","reset": false,"data": ["Cough","Sneeze","Fever","Fatigue","Loss of taste"]}]
+[
+    {
+        "type": "freeInput",
+        "content": "First question?",
+        "field": "firstQuestion",
+        "placeholder": "Sample place holder",
+        "regex": ".*"
+    },
+    {
+        "type": "multipleChoice",
+        "content": "Second question?",
+        "field": "secondQuestion",
+        "reset": false,
+        "data": [
+            "Cough",
+            "Sneeze",
+            "Fever",
+            "Fatigue",
+            "Loss of taste"
+        ]
+    }
+]
