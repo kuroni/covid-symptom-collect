@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Text, StyleSheet, View, Button, TouchableOpacity, TextInput } from 'react-native';
 import Modal from 'react-native-modal';
 
-import storage from '../helper/storage.js';
+import storage from '../helper/storage';
+import { getFullDate } from '../helper/misc';
 
 export default class UserScreen extends Component {
     state = {
@@ -60,7 +61,7 @@ export default class UserScreen extends Component {
                     data: {
                         id: i,
                         name: this.state.newName,
-                        data: new Date()
+                        date: new Date('1970-01-01')
                     }
                 }).then(() => {
                     this.setState({ newName: '', highlightedID: 0, dialogType: 0 });
@@ -79,6 +80,21 @@ export default class UserScreen extends Component {
             });
     }
 
+    switchToSurvey = () => {
+        const { users, highlightedID } = this.state;
+        if (highlightedID != 0) {
+            for (const user of users) {
+                if (user.id == highlightedID) {
+                    if (getFullDate(new Date(user.date)) !== getFullDate(new Date())) {
+                        this.setState({ highlightedID: 0 });
+                        this.props.navigation.navigate('Survey', { userid: highlightedID });
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
     render() {
         const { users, highlightedID, dialogType } = this.state;
         if (!users) {
@@ -89,10 +105,13 @@ export default class UserScreen extends Component {
             );
         }
         return (
-            <View>
+            <View style={styles.container}>
                 {users.map(user => this.renderChild(user))}
-                <Modal isVisible={dialogType == 1 && users.length < 6}>
-                    <View style={{ flex: 1 }}>
+                <Modal
+                    isVisible={dialogType == 1 && users.length < 6}
+                    style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+                >
+                    <View style={styles.popup}>
                         <Text>Please input user's nickname</Text>
                         <TextInput
                             style={styles.input}
@@ -100,24 +119,28 @@ export default class UserScreen extends Component {
                             placeholder="User's nickname"
                             onChangeText={(text) => this.setState({ newName: text })}
                         />
-                        <Button title="Add" onPress={this.addUser} />
+                        <View style={styles.button}>
+                            <Button title="Add" onPress={this.addUser} />
+                            <Button title="Cancel" onPress={() => this.setState({ dialogType: 0 })} />
+                        </View>
                     </View>
                 </Modal>
-                <Modal isVisible={dialogType == 2 && highlightedID != 0}>
-                    <View style={{ flex: 1 }}>
+                <Modal
+                    isVisible={dialogType == 2 && highlightedID != 0}
+                    style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+                >
+                    <View style={styles.popup}>
                         <Text>Please confirm removal</Text>
-                        <Button title="Remove" onPress={this.removeUser} />
+                        <View style={styles.button}>
+                            <Button title="Remove" style={styles.button} onPress={this.removeUser} />
+                            <Button title="Cancel" style={styles.button} onPress={() => this.setState({ dialogType: 0 })} />
+                        </View>
                     </View>
                 </Modal>
                 <View style={styles.buttons}>
                     <Button
                         title="Go to Survey!"
-                        onPress={() => {
-                            if (highlightedID != 0) {
-                                this.setState({ highlightedID: 0 });
-                                this.props.navigation.navigate('Survey', { userid: highlightedID });
-                            }
-                        }}
+                        onPress={this.switchToSurvey}
                     />
                     <Button
                         title="Add user"
@@ -139,7 +162,10 @@ const styles = StyleSheet.create({
         color: 'blue'
     },
     container: {
-        flex: 1
+        flex: 1,
+        alignContent: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff'
     },
     userOn: {
         padding: 15,
@@ -152,10 +178,19 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
     buttons: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
     input: {
         padding: 15,
         height: 50
+    },
+    popup: {
+        backgroundColor: 'white',
+        padding: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
     }
 });

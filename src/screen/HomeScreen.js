@@ -6,7 +6,9 @@ export default class HomeScreen extends Component {
         const { navigation } = this.props;
         return (
             <View style={styles.container}>
-                <Text> Home Screen! </Text>
+                <Text style={{alignContent: 'center'}}>
+                    Home Screen!
+                </Text>
                 <Button title="Go to Users!" onPress={() => navigation.navigate('User')} />
             </View>
         );
@@ -16,6 +18,8 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignContent: 'center',
+        justifyContent: 'space-between',
         backgroundColor: '#fff'
     }
 });

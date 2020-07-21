@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
+import PropTypes from 'prop-types';
 
 import { actionCreators } from '../../helper/store.js';
 
@@ -46,6 +47,10 @@ class FreeInput extends Component {
         );
     }
 }
+
+FreeInput.defaultProps = {
+    regex: '.*'
+};
 
 const styles = StyleSheet.create({
     title: {

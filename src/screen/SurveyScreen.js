@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, StyleSheet, Button } from 'react-native';
+import { ScrollView, StyleSheet, Button, View } from 'react-native';
 
 import MultipleChoice from '../views/survey/MultipleChoice';
 import FreeInput from '../views/survey/FreeInput';
@@ -26,7 +26,7 @@ class SurveyScreen extends Component {
                 id: userid,
                 data: {
                     ...ret,
-                    data: new Date()
+                    date: new Date()
                 }
             }));
     }
@@ -76,10 +76,12 @@ class SurveyScreen extends Component {
 
     render() {
         return (
-            <ScrollView style={styles.container}>
-                {this.state.questions.map(child => this.renderChild(child))}
+            <View style={styles.container}>
+                <ScrollView>
+                    {this.state.questions.map(child => this.renderChild(child))}
+                </ScrollView>
                 <Button title="Submit" onPress={() => this.submit()} />
-            </ScrollView>
+            </View>
         );
     }
 }
@@ -87,6 +89,8 @@ class SurveyScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignContent: 'center',
+        justifyContent: 'space-between',
         backgroundColor: '#fff'
     }
 });
