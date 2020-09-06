@@ -1,10 +1,10 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import HomeScreen from '../screen/HomeScreen';
-import EndScreen from '../screen/EndScreen';
-import SurveyScreen from '../screen/SurveyScreen';
-import UserScreen from '../screen/UserScreen';
+import HomeScreen from '../screens/HomeScreen';
+import EndScreen from '../screens/EndScreen';
+import SurveyScreen from '../screens/SurveyScreen';
+import UserScreen from '../screens/UserScreen';
 
 const StackNavigator = createStackNavigator(
     {
@@ -18,6 +18,6 @@ const StackNavigator = createStackNavigator(
     }
 );
 
-const RootNavigator = createAppContainer(StackNavigator);
+const HomeNavigator = createAppContainer(StackNavigator);
 
-export default RootNavigator;
+export default HomeNavigator;

@@ -3,7 +3,6 @@ import { Text, StyleSheet, View, Button, TouchableOpacity, TextInput } from 'rea
 import Modal from 'react-native-modal';
 
 import storage from '../helper/storage';
-import { getFullDate } from '../helper/misc';
 
 export default class UserScreen extends Component {
     state = {
@@ -30,13 +29,14 @@ export default class UserScreen extends Component {
         this.props.navigation.addListener('didFocus', this.fetchFromStorage);
     }
 
-    renderChild = (user) => {
+    renderChild = (user, idx) => {
         const { name, id } = user;
         const { highlightedID } = this.state;
         return (
             <TouchableOpacity
                 style={id == highlightedID ? styles.userOn : styles.userOff}
                 onPress={() => this.setState({ highlightedID: (highlightedID == id ? 0 : id) })}
+                key={idx}
             >
                 <Text>
                     {name}
@@ -60,8 +60,7 @@ export default class UserScreen extends Component {
                     id: i,
                     data: {
                         id: i,
-                        name: this.state.newName,
-                        date: new Date('1970-01-01')
+                        name: this.state.newName
                     }
                 }).then(() => {
                     this.setState({ newName: '', highlightedID: 0, dialogType: 0 });
@@ -85,10 +84,8 @@ export default class UserScreen extends Component {
         if (highlightedID != 0) {
             for (const user of users) {
                 if (user.id == highlightedID) {
-                    if (getFullDate(new Date(user.date)) !== getFullDate(new Date())) {
-                        this.setState({ highlightedID: 0 });
-                        this.props.navigation.navigate('Survey', { userid: highlightedID });
-                    }
+                    this.setState({ highlightedID: 0 });
+                    this.props.navigation.navigate('Survey', { userid: highlightedID });
                     return;
                 }
             }
@@ -106,7 +103,7 @@ export default class UserScreen extends Component {
         }
         return (
             <View style={styles.container}>
-                {users.map(user => this.renderChild(user))}
+                {users.map((user, idx) => this.renderChild(user, idx))}
                 <Modal
                     isVisible={dialogType == 1 && users.length < 6}
                     style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}

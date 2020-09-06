@@ -36,6 +36,7 @@ class MultipleChoice extends Component {
             <TouchableOpacity
                 style={appear ? styles.rowOn : styles.rowOff}
                 onPress={() => this.onPressItem(id)}
+                key={id}
             >
                 <Text>
                     {item}

@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, StyleSheet, Button, View } from 'react-native';
 
-import MultipleChoice from '../views/survey/MultipleChoice';
-import FreeInput from '../views/survey/FreeInput';
+import MultipleChoice from '../components/survey/MultipleChoice';
+import FreeInput from '../components/survey/FreeInput';
 import store, { actionCreators } from '../helper/store';
 import storage from '../helper/storage';
-import database from '../helper/database';
+import { database } from '../helper/firebaseWrapper';
 
 class SurveyScreen extends Component {
     state = {
@@ -24,10 +24,7 @@ class SurveyScreen extends Component {
             .then(ret => storage.save({
                 key: 'users',
                 id: userid,
-                data: {
-                    ...ret,
-                    date: new Date()
-                }
+                data: ret
             }));
     }
 
@@ -42,7 +39,7 @@ class SurveyScreen extends Component {
 
     }
 
-    renderChild = child => {
+    renderChild = (child, idx) => {
         const { type, field, content } = child;
         switch (type) {
             case 'freeInput':
@@ -53,6 +50,7 @@ class SurveyScreen extends Component {
                         field={field}
                         placeholder={placeholder}
                         regex={regex}
+                        key={idx}
                     />
                 );
             case 'multipleChoice':
@@ -63,6 +61,7 @@ class SurveyScreen extends Component {
                         field={field}
                         data={data}
                         reset={reset}
+                        key={idx}
                     />
                 );
             default:
@@ -78,7 +77,7 @@ class SurveyScreen extends Component {
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    {this.state.questions.map(child => this.renderChild(child))}
+                    {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
                 </ScrollView>
                 <Button title="Submit" onPress={() => this.submit()} />
             </View>
