@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, StyleSheet, Button, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
 import MultipleChoice from '../components/survey/MultipleChoice';
 import FreeInput from '../components/survey/FreeInput';
@@ -79,7 +80,9 @@ class SurveyScreen extends Component {
                 <ScrollView>
                     {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
                 </ScrollView>
-                <Button title="Submit" onPress={() => this.submit()} />
+                <Button mode='contained' onPress={() => this.submit()}>
+                    Submit
+                </Button>
             </View>
         );
     }

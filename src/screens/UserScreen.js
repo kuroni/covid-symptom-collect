@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, Button, TouchableOpacity, TextInput } from 'react-native';
-import Modal from 'react-native-modal';
+import { Text, StyleSheet, View, TextInput } from 'react-native';
+import { Button, Modal } from 'react-native-paper';
 
+import User from '../components/User';
 import storage from '../helper/storage';
 
 export default class UserScreen extends Component {
     state = {
-        highlightedID: 0,
-        dialogType: 0,
         newName: '',
-        users: null
+        users: null,
+        visible: false
     };
 
     fetchFromStorage = () => {
@@ -27,22 +27,6 @@ export default class UserScreen extends Component {
 
     componentDidMount() {
         this.props.navigation.addListener('didFocus', this.fetchFromStorage);
-    }
-
-    renderChild = (user, idx) => {
-        const { name, id } = user;
-        const { highlightedID } = this.state;
-        return (
-            <TouchableOpacity
-                style={id == highlightedID ? styles.userOn : styles.userOff}
-                onPress={() => this.setState({ highlightedID: (highlightedID == id ? 0 : id) })}
-                key={idx}
-            >
-                <Text>
-                    {name}
-                </Text>
-            </TouchableOpacity>
-        );
     }
 
     addUser = () => {
@@ -66,34 +50,49 @@ export default class UserScreen extends Component {
                     this.setState({ newName: '', highlightedID: 0, dialogType: 0 });
                     this.fetchFromStorage();
                 });
+                this.setState({ visible: false });
                 return;
             }
         }
     }
 
-    removeUser = () => {
-        storage.remove({ key: 'users', id: this.state.highlightedID })
+    removeUser = (idx) => {
+        storage.remove({ key: 'users', id: idx })
             .then(() => {
-                this.setState({ dialogType: 0, highlightedID: 0 });
                 this.fetchFromStorage();
             });
     }
 
-    switchToSurvey = () => {
-        const { users, highlightedID } = this.state;
-        if (highlightedID != 0) {
-            for (const user of users) {
-                if (user.id == highlightedID) {
-                    this.setState({ highlightedID: 0 });
-                    this.props.navigation.navigate('Survey', { userid: highlightedID });
-                    return;
-                }
-            }
+    switchToSurvey = (idx) => {
+        this.props.navigation.navigate('Survey', { userid: idx });
+        // const { users, highlightedID } = this.state;
+        // if (highlightedID != 0) {
+        //     for (const user of users) {
+        //         if (user.id == highlightedID) {
+        //             this.setState({ highlightedID: 0 });
+        //             this.props.navigation.navigate('Survey', { userid: highlightedID });
+        //             return;
+        //         }
+        //     }
+        // }
+    }
+
+    renderChild = (idx) => {
+        const { users } = this.state;
+        if (idx < users.length) {
+            const { id } = users[idx];
+            return (
+                <User user={users[idx]} onPress={() => this.switchToSurvey(id)} onLongPress={() => this.removeUser(id)}/>
+            );
+        } else {
+            return (
+                <User user={null} onPress={() => this.setState({ visible: true })}/>
+            );
         }
     }
 
     render() {
-        const { users, highlightedID, dialogType } = this.state;
+        const { users, visible } = this.state;
         if (!users) {
             return (
                 <Text>
@@ -102,12 +101,20 @@ export default class UserScreen extends Component {
             );
         }
         return (
-            <View style={styles.container}>
-                {users.map((user, idx) => this.renderChild(user, idx))}
-                <Modal
-                    isVisible={dialogType == 1 && users.length < 6}
-                    style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-                >
+            <View style={styles.userColumn}>
+                <View style={styles.userRow}>
+                    {this.renderChild(0)}
+                    {this.renderChild(1)}
+                </View>
+                <View style={styles.userRow}>
+                    {this.renderChild(3)}
+                    {this.renderChild(4)}
+                </View>
+                <View style={styles.userRow}>
+                    {this.renderChild(5)}
+                    {this.renderChild(6)}
+                </View>
+                <Modal visible={visible}  onDismiss={() => this.setState({ visible: false })}>
                     <View style={styles.popup}>
                         <Text>Please input user's nickname</Text>
                         <TextInput
@@ -117,39 +124,17 @@ export default class UserScreen extends Component {
                             onChangeText={(text) => this.setState({ newName: text })}
                         />
                         <View style={styles.button}>
-                            <Button title="Add" onPress={this.addUser} />
-                            <Button title="Cancel" onPress={() => this.setState({ dialogType: 0 })} />
+                            <Button mode="contained" onPress={() => this.addUser()}>
+                                Add
+                            </Button>
+                            <Button mode="contained" color="red" onPress={() => this.setState({ visible: false })}>
+                                Cancel
+                            </Button>
                         </View>
                     </View>
                 </Modal>
-                <Modal
-                    isVisible={dialogType == 2 && highlightedID != 0}
-                    style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-                >
-                    <View style={styles.popup}>
-                        <Text>Please confirm removal</Text>
-                        <View style={styles.button}>
-                            <Button title="Remove" style={styles.button} onPress={this.removeUser} />
-                            <Button title="Cancel" style={styles.button} onPress={() => this.setState({ dialogType: 0 })} />
-                        </View>
-                    </View>
-                </Modal>
-                <View style={styles.buttons}>
-                    <Button
-                        title="Go to Survey!"
-                        onPress={this.switchToSurvey}
-                    />
-                    <Button
-                        title="Add user"
-                        onPress={() => this.setState({ dialogType: 1 })}
-                    />
-                    <Button
-                        title="Remove user"
-                        onPress={() => this.setState({ dialogType: 2 })}
-                    />
-                </View>
             </View>
-        )
+        );
     }
 }
 
@@ -158,11 +143,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'blue'
     },
-    container: {
+    userColumn: {
         flex: 1,
+        flexDirection: 'column',
         alignContent: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#fff'
+        justifyContent: 'space-around'
+    },
+    userRow: {
+        flex: 1,
+        flexDirection: 'row',
+        alignContent: 'center',
+        justifyContent: 'space-around'
     },
     userOn: {
         padding: 15,
