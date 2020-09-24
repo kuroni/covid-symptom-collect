@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
-import { View, TextInput } from 'react-native';
-import { Subheading, Text, Button } from 'react-native-paper';
+import { Text } from 'react-native-paper';
+
+import Background from '../components/Background';
+import TextInput from '../components/TextInput';
+import Button from '../components/Button';
+import Header from '../components/Header';
+import Logo from '../components/Logo';
 
 import { auth } from '../helper/firebaseWrapper';
 import AuthContext from '../helper/context';
@@ -34,29 +39,46 @@ export default class RegisterScreen extends Component {
 
     render() {
         const { email, password, error } = this.state;
-    
+
         return (
             <AuthContext.Consumer>
                 {({ userChange }) => (
-                    <View>
-                        <Subheading>
-                            Email
-                        </Subheading>
-                        <TextInput value={email} placeholder='Your email' onChangeText={email => this.setState({ email })} />
-                        <Subheading>
-                            Password
-                        </Subheading>
-                        <TextInput value={password} placeholder='Your password' onChangeText={password => this.setState({ password })} />
+                    <Background>
+                        <Logo/>
+
+                        <Header>
+                            Welcome back
+                        </Header>
+
+                        <TextInput
+                            value={email}
+                            label="Email"
+                            onChangeText={email => this.setState({ email })}
+                            returnKeyType="next"
+                            autoCapitalize="none"
+                            autoCompleteType="email"
+                            textContentType="emailAddress"
+                            keyboardType="email-address"
+                        />
+                        <TextInput
+                            value={password}
+                            label='Password'
+                            onChangeText={password => this.setState({ password })} 
+                            returnKeyType="done"
+                            secureTextEntry
+                        />
+
                         <Text style={{ color: 'red' }}>
                             {error}
                         </Text>
+
                         <Button mode="contained" onPress={() => this.loginUser(userChange)}>
                             Login
                         </Button>
                         <Button mode="outlined" onPress={() => this.registerUser(userChange)}>
                             Register
                         </Button>
-                    </View>
+                    </Background>
                 )}
             </AuthContext.Consumer>
         );

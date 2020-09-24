@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, TextInput } from 'react-native';
-import { Button, Modal } from 'react-native-paper';
+import { Text, StyleSheet, View } from 'react-native';
+import { Modal } from 'react-native-paper';
+
+import Background from '../components/Background';
+import Button from '../components/Button';
+import TextInput from '../components/TextInput';
 
 import User from '../components/User';
 import storage from '../helper/storage';
@@ -101,39 +105,43 @@ export default class UserScreen extends Component {
             );
         }
         return (
-            <View style={styles.userColumn}>
-                <View style={styles.userRow}>
-                    {this.renderChild(0)}
-                    {this.renderChild(1)}
-                </View>
-                <View style={styles.userRow}>
-                    {this.renderChild(3)}
-                    {this.renderChild(4)}
-                </View>
-                <View style={styles.userRow}>
-                    {this.renderChild(5)}
-                    {this.renderChild(6)}
-                </View>
-                <Modal visible={visible}  onDismiss={() => this.setState({ visible: false })}>
-                    <View style={styles.popup}>
-                        <Text>Please input user's nickname</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={this.state.newName}
-                            placeholder="User's nickname"
-                            onChangeText={(text) => this.setState({ newName: text })}
-                        />
-                        <View style={styles.button}>
-                            <Button mode="contained" onPress={() => this.addUser()}>
-                                Add
-                            </Button>
-                            <Button mode="contained" color="red" onPress={() => this.setState({ visible: false })}>
-                                Cancel
-                            </Button>
-                        </View>
+            <Background>
+                {/* <View style={styles.userColumn}> */}
+                    <View style={styles.userRow}>
+                        {this.renderChild(0)}
+                        {this.renderChild(1)}
                     </View>
-                </Modal>
-            </View>
+                    <View style={styles.userRow}>
+                        {this.renderChild(3)}
+                        {this.renderChild(4)}
+                    </View>
+                    <View style={styles.userRow}>
+                        {this.renderChild(5)}
+                        {this.renderChild(6)}
+                    </View>
+                    <Modal visible={visible} onDismiss={() => this.setState({ visible: false })}>
+                        <View style={styles.popup}>
+                            <Text>Please input user's nickname</Text>
+                            <TextInput
+                                mode="flat"
+                                // style={styles.input}
+                                value={this.state.newName}
+                                label="Name"
+                                placeholder="User's nickname"
+                                onChangeText={(text) => this.setState({ newName: text })}
+                            />
+                            <View style={styles.buttons}>
+                                <Button mode="outlined" onPress={() => this.addUser()}>
+                                    Add
+                                </Button>
+                                <Button mode="contained" onPress={() => this.setState({ visible: false })}>
+                                    Cancel
+                                </Button>
+                            </View>
+                        </View>
+                    </Modal>
+                {/* </View> */}
+            </Background>
         );
     }
 }
@@ -167,7 +175,7 @@ const styles = StyleSheet.create({
     },
     buttons: {
         flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-between'
     },
     input: {
         padding: 15,

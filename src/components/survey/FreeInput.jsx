@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Text, TextInput } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import { TextInput } from 'react-native-paper';
 
-import { actionCreators } from '../../helper/store.js';
+import { actionCreators } from '../../helper/store';
 
 function mapState(state, ownProps) {
     const { field } = ownProps;
@@ -60,8 +61,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     input: {
-        padding: 15,
-        height: 50
+        // padding: 15,
+        // height: 10
     }
 });
 

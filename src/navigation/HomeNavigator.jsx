@@ -15,6 +15,10 @@ const StackNavigator = createStackNavigator(
     },
     {
         initialRouteName: 'Home',
+        headerMode: 'none',
+        defaultNavigationOptions: {
+            cardStyle: { backgroundColor: 'white' }
+        }
     }
 );
 

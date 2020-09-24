@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 
-import { actionCreators } from '../../helper/store.js';
+import { actionCreators } from '../../helper/store';
 
 function mapState(state, ownProps) {
     const { field } = ownProps;

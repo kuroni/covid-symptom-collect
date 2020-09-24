@@ -8,4 +8,6 @@ const storage = new Storage({
     enableCache: true
 });
 
+storage.clearMap();
+
 export default storage;
