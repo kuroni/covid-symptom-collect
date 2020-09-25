@@ -63,7 +63,7 @@ export default class RegisterScreen extends Component {
                         <TextInput
                             value={password}
                             label='Password'
-                            onChangeText={password => this.setState({ password })} 
+                            onChangeText={password => this.setState({ password })}
                             returnKeyType="done"
                             secureTextEntry
                         />

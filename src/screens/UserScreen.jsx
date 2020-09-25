@@ -34,6 +34,9 @@ export default class UserScreen extends Component {
     }
 
     addUser = () => {
+        if (this.state.newName === '') {
+            return;
+        }
         for (let i = 1; i <= 6; i++) {
             let valid = true;
             for (const user of this.state.users) {
@@ -98,6 +101,7 @@ export default class UserScreen extends Component {
     render() {
         const { users, visible } = this.state;
         if (!users) {
+            this.fetchFromStorage();
             return (
                 <Text>
                     Loading...
@@ -106,87 +110,73 @@ export default class UserScreen extends Component {
         }
         return (
             <Background>
-                {/* <View style={styles.userColumn}> */}
-                    <View style={styles.userRow}>
-                        {this.renderChild(0)}
-                        {this.renderChild(1)}
-                    </View>
-                    <View style={styles.userRow}>
-                        {this.renderChild(3)}
-                        {this.renderChild(4)}
-                    </View>
-                    <View style={styles.userRow}>
-                        {this.renderChild(5)}
-                        {this.renderChild(6)}
-                    </View>
-                    <Modal visible={visible} onDismiss={() => this.setState({ visible: false })}>
-                        <View style={styles.popup}>
-                            <Text>Please input user's nickname</Text>
-                            <TextInput
-                                mode="flat"
-                                // style={styles.input}
-                                value={this.state.newName}
-                                label="Name"
-                                placeholder="User's nickname"
-                                onChangeText={(text) => this.setState({ newName: text })}
-                            />
-                            <View style={styles.buttons}>
+                <View style={styles.userRow}>
+                    {this.renderChild(0)}
+                    {this.renderChild(1)}
+                </View>
+                <View style={styles.userRow}>
+                    {this.renderChild(3)}
+                    {this.renderChild(4)}
+                </View>
+                <View style={styles.userRow}>
+                    {this.renderChild(5)}
+                    {this.renderChild(6)}
+                </View>
+                <Modal visible={visible} onDismiss={() => this.setState({ visible: false })} contentContainerStyle={styles.modal}>
+                    <View style={styles.popup}>
+                        <Text>Please input user's nickname</Text>
+                        <TextInput
+                            mode="flat"
+                            value={this.state.newName}
+                            label="Nickname"
+                            onChangeText={(text) => this.setState({ newName: text })}
+                        />
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.buttonWrapper}>
                                 <Button mode="outlined" onPress={() => this.addUser()}>
                                     Add
                                 </Button>
+                            </View>
+                            <View style={styles.buttonWrapper}>
                                 <Button mode="contained" onPress={() => this.setState({ visible: false })}>
                                     Cancel
                                 </Button>
                             </View>
                         </View>
-                    </Modal>
-                {/* </View> */}
+                    </View>
+                </Modal>
             </Background>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 16,
-        color: 'blue'
-    },
-    userColumn: {
-        flex: 1,
-        flexDirection: 'column',
-        alignContent: 'center',
-        justifyContent: 'space-around'
-    },
     userRow: {
         flex: 1,
         flexDirection: 'row',
         alignContent: 'center',
         justifyContent: 'space-around'
     },
-    userOn: {
-        padding: 15,
-        marginBottom: 5,
-        backgroundColor: 'skyblue'
-    },
-    userOff: {
-        padding: 15,
-        marginBottom: 5,
-        backgroundColor: 'white'
-    },
-    buttons: {
+    buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    input: {
-        padding: 15,
-        height: 50
+    buttonWrapper: {
+        flex: 1,
+        padding: 20,
+    },
+    modal: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     popup: {
         backgroundColor: 'white',
+        width: '90%',
         padding: 22,
-        justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 4,
+        justifyContent: 'center',
+        borderRadius: 10,
         borderColor: 'rgba(0, 0, 0, 0.1)',
     }
 });
