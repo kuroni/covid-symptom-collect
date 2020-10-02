@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, StyleSheet, KeyboardAvoidingView } from 'react-native';
 
-
 export default class Background extends Component {
     render() {
         const { children } = this.props;

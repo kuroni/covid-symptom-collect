@@ -5,19 +5,22 @@ import { Button } from 'react-native-paper';
 
 import MultipleChoice from '../components/survey/MultipleChoice';
 import FreeInput from '../components/survey/FreeInput';
+import SliderQuestion from '../components/survey/SliderQuestion';
+
 import store, { actionCreators } from '../helper/store';
 import storage from '../helper/storage';
 import { database } from '../helper/firebaseWrapper';
 
 class SurveyScreen extends Component {
     state = {
-        questions: []
+        last: false,
+        loaded: false
     }
 
     submit = () => {
         const { dispatch, navigation } = this.props;
         const { userid } = navigation.state.params;
-        database.collection("users").add(store.getState());
+        database.collection("userData").add(store.getState());
         dispatch(actionCreators.clear());
         navigation.goBack();
         navigation.navigate('End');
@@ -29,15 +32,39 @@ class SurveyScreen extends Component {
             }));
     }
 
-    componentDidMount() {
-        const doc = database.doc('config/questions');
-        doc.get().then(snapshot => {
-            this.setState({ questions: snapshot.data().questions });
-        });
-        doc.onSnapshot(snapshot => {
-            this.setState({ questions: snapshot.data().questions });
-        });
+    fetchFromStorage = () => {
+        const { screen } = this.props.navigation.state.params;
+        storage.load({
+            key: 'questionScreens'
+        })
+        .then(ret =>
+            this.setState({ ...ret[screen], last: (screen == ret.length - 1), loaded: true })
+        )
+        .catch(err => {
+            switch (err.name) {
+                case 'ExpiredError':
+                case 'NotFoundError':
+                    database.collection('questionScreens').get()
+                        .then(snapshot => {
+                            let array = [];
+                            snapshot.forEach(doc => array.push(doc.data()));
+                            console.log(array);
+                            storage.save({
+                                key: 'questionScreens',
+                                data: array,
+                                expires: 1000
+                            }).then(() => this.fetchFromStorage());
+                        });
+                    return;
+                default:
+                    console.log(err);
+                    throw 'oh no';
+            }
+        })
+    }
 
+    componentDidMount() {
+        this.fetchFromStorage();
     }
 
     renderChild = (child, idx) => {
@@ -65,6 +92,17 @@ class SurveyScreen extends Component {
                         key={idx}
                     />
                 );
+            case 'slider':
+                const { minText, maxText, max } = child;
+                return (
+                    <SliderQuestion
+                        content={content}
+                        minText={minText}
+                        maxText={maxText}
+                        max={max}
+                        key={idx}
+                    />
+                );
             default:
                 return (
                     <Text>
@@ -74,17 +112,43 @@ class SurveyScreen extends Component {
         }
     }
 
-    render() {
-        return (
-            <View style={styles.container}>
-                <ScrollView>
-                    {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
-                </ScrollView>
+    finishButton = () => {
+        const { navigation } = this.props;
+        const { userid, screen } = navigation.state.params;
+        if (this.state.last) {
+            return (
                 <Button mode='contained' onPress={() => this.submit()}>
                     Submit
                 </Button>
-            </View>
-        );
+            );
+        } else {
+            return (
+                <Button
+                    mode='contained'
+                    onPress={() => navigation.push('Survey', { userid: userid, screen: screen + 1 })}
+                >
+                    Next Questions
+                </Button>
+            );
+        }
+    }
+
+    render() {
+        if (this.state.loaded) {
+            return (
+                <View style={styles.container}>
+                    <ScrollView>
+                        {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
+                    </ScrollView>
+                    {this.finishButton()}
+                </View>
+            );
+        } else {
+            return (
+                <View>
+                </View>
+            )
+        }
     }
 }
 

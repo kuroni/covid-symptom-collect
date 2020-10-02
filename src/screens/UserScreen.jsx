@@ -71,7 +71,7 @@ export default class UserScreen extends Component {
     }
 
     switchToSurvey = (idx) => {
-        this.props.navigation.navigate('Survey', { userid: idx });
+        this.props.navigation.push('Survey', { userid: idx, screen: 0 });
         // const { users, highlightedID } = this.state;
         // if (highlightedID != 0) {
         //     for (const user of users) {
@@ -126,19 +126,18 @@ export default class UserScreen extends Component {
                     <View style={styles.popup}>
                         <Text>Please input user's nickname</Text>
                         <TextInput
-                            mode="flat"
                             value={this.state.newName}
                             label="Nickname"
                             onChangeText={(text) => this.setState({ newName: text })}
                         />
                         <View style={styles.buttonContainer}>
                             <View style={styles.buttonWrapper}>
-                                <Button mode="outlined" onPress={() => this.addUser()}>
+                                <Button mode="outlined" onPress={() => this.addUser()} style={{ width: '90%' }}>
                                     Add
                                 </Button>
                             </View>
                             <View style={styles.buttonWrapper}>
-                                <Button mode="contained" onPress={() => this.setState({ visible: false })}>
+                                <Button mode="contained" onPress={() => this.setState({ visible: false })} style={{ width: '90%' }}>
                                     Cancel
                                 </Button>
                             </View>
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
     },
     buttonWrapper: {
         flex: 1,
-        padding: 20,
+        alignItems: 'center'
     },
     modal: {
         flex: 1,

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
+
 import { theme } from '../core/theme';
 
 export default class Header extends Component {
