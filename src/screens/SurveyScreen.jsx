@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import MultipleChoice from '../components/survey/MultipleChoice';
 import FreeInput from '../components/survey/FreeInput';
 import SliderQuestion from '../components/survey/SliderQuestion';
+import Dropdown from '../components/survey/Dropdown';
 
 import store, { actionCreators } from '../helper/store';
 import storage from '../helper/storage';
 import { database } from '../helper/firebaseWrapper';
+
+import Button from '../components/Button';
+import Background from '../components/Background';
 
 class SurveyScreen extends Component {
     state = {
@@ -70,7 +73,7 @@ class SurveyScreen extends Component {
     renderChild = (child, idx) => {
         const { type, field, content } = child;
         switch (type) {
-            case 'freeInput':
+            case 'freeInput': {
                 const { placeholder, regex } = child;
                 return (
                     <FreeInput
@@ -81,7 +84,8 @@ class SurveyScreen extends Component {
                         key={idx}
                     />
                 );
-            case 'multipleChoice':
+            }
+            case 'multipleChoice': {
                 const { data, reset } = child;
                 return (
                     <MultipleChoice
@@ -92,23 +96,37 @@ class SurveyScreen extends Component {
                         key={idx}
                     />
                 );
-            case 'slider':
+            }
+            case 'slider': {
                 const { minText, maxText, max } = child;
                 return (
                     <SliderQuestion
                         content={content}
+                        field={field}
                         minText={minText}
                         maxText={maxText}
                         max={max}
                         key={idx}
                     />
                 );
-            default:
+            }
+            case 'dropdown': {
+                const { data, label } = child;
                 return (
-                    <Text>
-                        {JSON.stringify(child)}
-                    </Text>
+                    <Dropdown
+                        content={content}
+                        field={field}
+                        data={data}
+                        label={label}
+                    />
                 );
+            }
+            // default:
+            //     return (
+            //         <Text>
+            //             {JSON.stringify(child)}
+            //         </Text>
+            //     );
         }
     }
 
@@ -136,18 +154,17 @@ class SurveyScreen extends Component {
     render() {
         if (this.state.loaded) {
             return (
-                <View style={styles.container}>
+                <Background>
                     <ScrollView>
                         {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
                     </ScrollView>
                     {this.finishButton()}
-                </View>
+                </Background>
             );
         } else {
             return (
-                <View>
-                </View>
-            )
+                <Background/>
+            );
         }
     }
 }
