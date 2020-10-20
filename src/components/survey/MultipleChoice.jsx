@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 
+import Question from './Question';
 import { actionCreators } from '../../helper/store';
 
 function mapState(state, ownProps) {
@@ -49,10 +50,8 @@ class MultipleChoice extends Component {
         const { content, data } = this.props;
 
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>
-                    {content}
-                </Text>
+            <View style={this.props.style}>
+                <Question content={content}/>
                 {data.map((item, id) => this.renderItem(item, id))}
             </View>
         );

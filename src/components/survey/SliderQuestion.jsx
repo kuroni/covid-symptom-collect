@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Slider, View, StyleSheet } from 'react-native';
 import { Text, Caption } from 'react-native-paper';
 
+import Question from './Question';
 import { actionCreators } from '../../helper/store';
 import { theme } from '../../core/theme';
 
@@ -30,10 +31,8 @@ class SliderQuestion extends Component {
         const { content, max, minText, maxText } = this.props;
 
         return (
-            <View style={styles.container}>
-                <Text>
-                    {content}
-                </Text>
+            <View style={this.props.style}>
+                <Question content={content}/>
                 <View style={styles.sliderContainer}>
                     <Caption>
                         {minText}
@@ -62,7 +61,8 @@ const styles = StyleSheet.create({
         color: 'blue'
     },
     container: {
-        flex: 1
+        flex: 1,
+        padding: 10
     },
     sliderContainer: {
         flex: 1,

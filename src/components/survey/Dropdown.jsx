@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { Menu, TouchableRipple, TextInput as Input } from 'react-native-paper';
 
+import Question from './Question';
 import TextInput from '../TextInput';
 import { actionCreators } from '../../helper/store';
 
@@ -30,10 +31,8 @@ class Dropdown extends Component {
         const { visible, answer } = this.state;
 
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>
-                    {content}
-                </Text>
+            <View style={this.props.style}>
+                <Question content={content}/>
                 <Menu
                     visible={visible}
                     onDismiss={() => this.setState({ visible: false })}
@@ -66,10 +65,6 @@ class Dropdown extends Component {
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 16,
-        color: 'blue'
-    },
     container: {
         flex: 1
     },

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { Modal } from 'react-native-paper';
+import { Modal, Divider } from 'react-native-paper';
 
 import Background from '../components/Background';
 import Button from '../components/Button';
 import TextInput from '../components/TextInput';
+import Header from '../components/Header';
 
 import User from '../components/User';
 import storage from '../helper/storage';
@@ -110,6 +111,10 @@ export default class UserScreen extends Component {
         }
         return (
             <Background>
+                <Header>
+                    Please select a user
+                </Header>
+                <Divider/>
                 <View style={styles.userRow}>
                     {this.renderChild(0)}
                     {this.renderChild(1)}

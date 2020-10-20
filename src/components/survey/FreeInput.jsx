@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
+import Question from './Question';
 import { actionCreators } from '../../helper/store';
 
 function mapState(state, ownProps) {
@@ -33,10 +34,8 @@ class FreeInput extends Component {
         const { content, placeholder, answer } = this.props;
 
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>
-                    {content}
-                </Text>
+            <View style={this.props.style}>
+                <Question content={content}/>
                 <TextInput
                     style={styles.input}
                     value={answer}

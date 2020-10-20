@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, StyleSheet } from 'react-native';
+import { Divider } from 'react-native-paper';
 
 import MultipleChoice from '../components/survey/MultipleChoice';
 import FreeInput from '../components/survey/FreeInput';
@@ -13,6 +14,7 @@ import { database } from '../helper/firebaseWrapper';
 
 import Button from '../components/Button';
 import Background from '../components/Background';
+import Header from '../components/Header';
 
 class SurveyScreen extends Component {
     state = {
@@ -82,6 +84,7 @@ class SurveyScreen extends Component {
                         placeholder={placeholder}
                         regex={regex}
                         key={idx}
+                        style={styles.question}
                     />
                 );
             }
@@ -94,6 +97,7 @@ class SurveyScreen extends Component {
                         data={data}
                         reset={reset}
                         key={idx}
+                        style={styles.question}
                     />
                 );
             }
@@ -107,6 +111,7 @@ class SurveyScreen extends Component {
                         maxText={maxText}
                         max={max}
                         key={idx}
+                        style={styles.question}
                     />
                 );
             }
@@ -118,6 +123,7 @@ class SurveyScreen extends Component {
                         field={field}
                         data={data}
                         label={label}
+                        style={styles.question}
                     />
                 );
             }
@@ -155,7 +161,11 @@ class SurveyScreen extends Component {
         if (this.state.loaded) {
             return (
                 <Background>
-                    <ScrollView>
+                    <Header style={{ padding: 20 }}>
+                        {this.state.header}
+                    </Header>
+                    <Divider/>
+                    <ScrollView style={{ alignContent: 'flex-start', width: '100%' }}>
                         {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
                     </ScrollView>
                     {this.finishButton()}
@@ -175,6 +185,10 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#fff'
+    },
+    question: {
+        padding: 20,
+        flex: 1
     }
 });
 
