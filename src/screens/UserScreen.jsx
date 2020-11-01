@@ -112,7 +112,7 @@ export default class UserScreen extends Component {
         return (
             <Background>
                 <Header>
-                    Please select a user
+                    Please select a family member
                 </Header>
                 <Divider/>
                 <View style={styles.userRow}>

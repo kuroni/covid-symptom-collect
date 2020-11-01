@@ -6,7 +6,6 @@ import { Divider } from 'react-native-paper';
 import MultipleChoice from '../components/survey/MultipleChoice';
 import FreeInput from '../components/survey/FreeInput';
 import SliderQuestion from '../components/survey/SliderQuestion';
-import Dropdown from '../components/survey/Dropdown';
 
 import store, { actionCreators } from '../helper/store';
 import storage from '../helper/storage';
@@ -49,7 +48,7 @@ class SurveyScreen extends Component {
             switch (err.name) {
                 case 'ExpiredError':
                 case 'NotFoundError':
-                    database.collection('questionScreens').get()
+                    database.collection('questionScreens').orderBy("screen", "asc").get()
                         .then(snapshot => {
                             let array = [];
                             snapshot.forEach(doc => array.push(doc.data()));
@@ -111,18 +110,6 @@ class SurveyScreen extends Component {
                         maxText={maxText}
                         max={max}
                         key={idx}
-                        style={styles.question}
-                    />
-                );
-            }
-            case 'dropdown': {
-                const { data, label } = child;
-                return (
-                    <Dropdown
-                        content={content}
-                        field={field}
-                        data={data}
-                        label={label}
                         style={styles.question}
                     />
                 );

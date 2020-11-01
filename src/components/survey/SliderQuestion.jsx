@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Slider, View, StyleSheet } from 'react-native';
-import { Text, Caption } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { RadioButton, TouchableRipple, Text } from 'react-native-paper';
+import color from 'color';
 
 import Question from './Question';
 import { actionCreators } from '../../helper/store';
@@ -16,39 +17,60 @@ function mapState(state, ownProps) {
 }
 
 class SliderQuestion extends Component {
+    state = {
+        data: []
+    };
+
     constructor(props) {
         super(props);
-        const { field, dispatch } = this.props;
-        dispatch(actionCreators.edit({ [field]: 1 }));
+        const { field, dispatch, max, minText, maxText } = this.props;
+        for (let i = 0; i < max; i++) {
+            let text = i + 1;
+            if (i == 0) {
+                text += '\n(' + minText + ')';
+            } else if (i == max - 1) {
+                text += '\n(' + maxText + ')';
+            }
+            this.state.data.push(text);
+        }
+        dispatch(actionCreators.edit({ [field]: 0 }));
     }
 
-    onSliderChange = (value) => {
+    onPressItem = (value) => {
         const { field, dispatch } = this.props;
         dispatch(actionCreators.edit({ [field]: value }));
     }
 
+    renderRadiobutton = (item, id) => {
+        const { answer } = this.props;
+        const appear = (answer == id);
+        return (
+            <TouchableRipple
+                onPress={() => this.onPressItem(id)}
+                key={id}
+                style={{ flex: 1 }}
+            >
+                <View style={styles.radioButton} pointerEvents="none">
+                    <RadioButton
+                        status={appear ? 'checked' : 'unchecked'}
+                    />
+                    <Text style={styles.labelStyle}>
+                        {item}
+                    </Text>
+                </View>
+            </TouchableRipple>
+        );
+    }
+
     render() {
-        const { content, max, minText, maxText } = this.props;
+        const { content } = this.props;
+        const { data } = this.state;
 
         return (
             <View style={this.props.style}>
-                <Question content={content}/>
-                <View style={styles.sliderContainer}>
-                    <Caption>
-                        {minText}
-                    </Caption>
-                    <Slider
-                        style={{width: '50%', height: 30}}
-                        minimumValue={1}
-                        maximumValue={max}
-                        step={1}
-                        onSlidingComplete={(value) => this.onSliderChange(value)}
-                        minimumTrackTintColor={theme.colors.primary}
-                        maximumTrackTintColor={theme.colors.primaryLight}
-                    />
-                    <Caption>
-                        {maxText}
-                    </Caption>
+                <Question content={content} />
+                <View style={styles.container}>
+                    {data.map((item, id) => this.renderRadiobutton(item, id))}
                 </View>
             </View>
         );
@@ -56,27 +78,21 @@ class SliderQuestion extends Component {
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 16,
-        color: 'blue'
+    labelStyle: {
+        color: color(theme.colors.text).alpha(0.8).rgb().string(),
+        fontSize: 12,
+        textAlign: 'center',
+        flexShrink: 1
     },
     container: {
-        flex: 1,
-        padding: 10
-    },
-    sliderContainer: {
-        flex: 1,
         flexDirection: 'row'
     },
-    rowOn: {
-        padding: 15,
-        marginBottom: 5,
-        backgroundColor: 'skyblue'
-    },
-    rowOff: {
-        padding: 15,
-        marginBottom: 5,
-        backgroundColor: 'white'
+    radioButton: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 8,
+        paddingHorizontal: 16
     }
 });
 

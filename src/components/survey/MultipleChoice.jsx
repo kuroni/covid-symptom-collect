@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
+import { RadioButton, Checkbox } from 'react-native-paper';
+import color from 'color';
 
 import Question from './Question';
+import { theme } from '../../core/theme';
 import { actionCreators } from '../../helper/store';
 
 function mapState(state, ownProps) {
@@ -24,57 +27,59 @@ class MultipleChoice extends Component {
         let { answer } = this.props;
         const { reset, dispatch, field } = this.props;
         if (reset) {
-            answer &= (1 << id);
+            answer = id;
+        } else {
+            answer ^= (1 << id);
         }
-        answer ^= (1 << id);
         dispatch(actionCreators.edit({ [field]: answer }));
     }
 
-    renderItem = (item, id) => {
-        const appear = (this.props.answer >> id & 1) == 1;
-
+    renderCheckbox = (item, id) => {
+        const { answer } = this.props;
+        const appear = (answer >> id & 1) == 1;
         return (
-            <TouchableOpacity
-                style={appear ? styles.rowOn : styles.rowOff}
-                onPress={() => this.onPressItem(id)}
-                key={id}
-            >
-                <Text>
-                    {item}
-                </Text>
-            </TouchableOpacity>
+            <View key={id}>
+                <Checkbox.Item
+                    status={appear ? 'checked' : 'unchecked'}
+                    onPress={() => this.onPressItem(id)}
+                    label={item}
+                    labelStyle={styles.labelStyle}
+                />
+            </View>
+        );
+    }
+
+    renderRadiobutton = (item, id) => {
+        const { answer } = this.props;
+        const appear = (answer == id);
+        return (
+            <View key={id}>
+                <RadioButton.Item
+                    status={appear ? 'checked' : 'unchecked'}
+                    onPress={() => this.onPressItem(id)}
+                    label={item}
+                    labelStyle={styles.labelStyle}
+                />
+            </View>
         );
     }
 
     render() {
-        const { content, data } = this.props;
+        const { content, data, reset } = this.props;
 
         return (
             <View style={this.props.style}>
                 <Question content={content}/>
-                {data.map((item, id) => this.renderItem(item, id))}
+                {data.map((item, id) => (reset ? this.renderRadiobutton : this.renderCheckbox)(item, id))}
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 16,
-        color: 'blue'
-    },
-    container: {
-        flex: 1
-    },
-    rowOn: {
-        padding: 15,
-        marginBottom: 5,
-        backgroundColor: 'skyblue'
-    },
-    rowOff: {
-        padding: 15,
-        marginBottom: 5,
-        backgroundColor: 'white'
+    labelStyle: {
+        color: color(theme.colors.text).alpha(0.8).rgb().string(),
+        fontSize: 14
     }
 });
 

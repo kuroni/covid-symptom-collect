@@ -9,6 +9,7 @@ import storage from './src/helper/storage';
 import RegisterScreen from './src/screens/AuthScreen';
 import HomeNavigator from './src/navigation/HomeNavigator';
 import AuthContext from './src/helper/context';
+import { theme } from './src/core/theme';
 
 export default class App extends Component {
     state = {
@@ -42,7 +43,7 @@ export default class App extends Component {
         return (
             <AuthContext.Provider value={{ user: user, userChange: (newUser) => this.userChange(newUser) }}>
                 <StoreProvider store={store}>
-                    <PaperProvider>
+                    <PaperProvider theme={theme}>
                         {user ? <HomeNavigator /> : <RegisterScreen />}
                     </PaperProvider>
                 </StoreProvider>
