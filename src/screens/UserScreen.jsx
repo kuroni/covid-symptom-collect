@@ -116,16 +116,28 @@ export default class UserScreen extends Component {
                 </Header>
                 <Divider/>
                 <View style={styles.userRow}>
-                    {this.renderChild(0)}
-                    {this.renderChild(1)}
+                    <View style={styles.userColumn}>
+                        {this.renderChild(0)}
+                    </View>
+                    <View style={styles.userColumn}>
+                        {this.renderChild(1)}
+                    </View>
                 </View>
                 <View style={styles.userRow}>
-                    {this.renderChild(3)}
-                    {this.renderChild(4)}
+                    <View style={styles.userColumn}>
+                        {this.renderChild(2)}
+                    </View>
+                    <View style={styles.userColumn}>
+                        {this.renderChild(3)}
+                    </View>
                 </View>
                 <View style={styles.userRow}>
-                    {this.renderChild(5)}
-                    {this.renderChild(6)}
+                    <View style={styles.userColumn}>
+                        {this.renderChild(4)}
+                    </View>
+                    <View style={styles.userColumn}>
+                        {this.renderChild(5)}
+                    </View>
                 </View>
                 <Modal visible={visible} onDismiss={() => this.setState({ visible: false })} contentContainerStyle={styles.modal}>
                     <View style={styles.popup}>
@@ -159,7 +171,14 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignContent: 'center',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        padding: 10
+    },
+    userColumn: {
+        padding: 10,
+        flex: 1,
+        borderRadius: 10,
+        overflow: 'hidden'
     },
     buttonContainer: {
         flexDirection: 'row',

@@ -18,7 +18,6 @@ export default class App extends Component {
     };
 
     userChange = (newUser) => {
-        console.log(newUser);
         storage.save({ key: 'user', data: newUser });
         this.setState({ user: newUser });
     }
@@ -26,11 +25,10 @@ export default class App extends Component {
     componentDidMount() {
         storage.load({ key: 'user' })
             .then(user => {
-                console.log('done');
                 this.setState({ user, isLoading: false });
             })
             .catch(error => {
-                console.log(error);
+                console.error(error);
                 this.setState({ isLoading: false });
             });
     }

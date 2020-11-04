@@ -22,7 +22,7 @@ export default class RegisterScreen extends Component {
         auth.createUserWithEmailAndPassword(email, password)
             .then(user => userChange(user))
             .catch(err => {
-                console.log(err);
+                console.error(err);
                 this.setState({ error: String(err) });
             });
     }
@@ -32,7 +32,7 @@ export default class RegisterScreen extends Component {
         auth.signInWithEmailAndPassword(email, password)
             .then(user => userChange(user))
             .catch(err => {
-                console.log(err);
+                console.error(err);
                 this.setState({ error: String(err) });
             });
     }

@@ -14,6 +14,7 @@ import { database } from '../helper/firebaseWrapper';
 import Button from '../components/Button';
 import Background from '../components/Background';
 import Header from '../components/Header';
+import DateChoice from '../components/survey/DateChoice';
 
 class SurveyScreen extends Component {
     state = {
@@ -52,7 +53,6 @@ class SurveyScreen extends Component {
                         .then(snapshot => {
                             let array = [];
                             snapshot.forEach(doc => array.push(doc.data()));
-                            console.log(array);
                             storage.save({
                                 key: 'questionScreens',
                                 data: array,
@@ -61,7 +61,7 @@ class SurveyScreen extends Component {
                         });
                     return;
                 default:
-                    console.log(err);
+                    console.error(err);
                     throw 'oh no';
             }
         })
@@ -113,6 +113,16 @@ class SurveyScreen extends Component {
                         style={styles.question}
                     />
                 );
+            }
+            case 'dateChoice': {
+                return (
+                    <DateChoice
+                        content={content}
+                        field={field}
+                        key={idx}
+                        style={styles.question}
+                    />
+                )
             }
             // default:
             //     return (
