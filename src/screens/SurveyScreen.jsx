@@ -28,7 +28,7 @@ class SurveyScreen extends Component {
         database.collection("userData").add(store.getState());
         dispatch(actionCreators.clear());
         navigation.goBack();
-        navigation.navigate('End');
+        navigation.navigate('end');
         storage.load({ key: 'users', id: userid })
             .then(ret => storage.save({
                 key: 'users',
@@ -146,7 +146,7 @@ class SurveyScreen extends Component {
             return (
                 <Button
                     mode='contained'
-                    onPress={() => navigation.push('Survey', { userid: userid, screen: screen + 1 })}
+                    onPress={() => navigation.push('survey', { userid: userid, screen: screen + 1 })}
                 >
                     Next Questions
                 </Button>
@@ -162,7 +162,7 @@ class SurveyScreen extends Component {
                         {this.state.header}
                     </Header>
                     <Divider/>
-                    <ScrollView style={{ alignContent: 'flex-start', width: '100%' }}>
+                    <ScrollView style={styles.surveyView}>
                         {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
                     </ScrollView>
                     {this.finishButton()}
@@ -186,6 +186,10 @@ const styles = StyleSheet.create({
     question: {
         padding: 20,
         flex: 1
+    },
+    surveyView: {
+        alignContent: 'flex-start',
+        width: '100%'
     }
 });
 

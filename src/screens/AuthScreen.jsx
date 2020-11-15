@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native-paper';
+import { Text, Divider } from 'react-native-paper';
 
 import Background from '../components/Background';
 import TextInput from '../components/TextInput';
@@ -49,6 +49,8 @@ export default class RegisterScreen extends Component {
                         <Header>
                             Welcome back
                         </Header>
+
+                        <Divider/>
 
                         <TextInput
                             value={email}

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Divider } from 'react-native-paper';
 
 import Background from '../components/Background';
 import Button from '../components/Button';
@@ -16,8 +17,8 @@ export default class HomeScreen extends Component {
                     <Background>
                         <Logo />
                         <Header>Home Screen!</Header>
-    
-                        <Button mode="outlined" onPress={() => navigation.navigate('User')}>
+                        <Divider/>
+                        <Button mode="outlined" onPress={() => navigation.navigate('user')}>
                             Go to Users!
                         </Button>
                         <Button mode="contained" onPress={() => userChange(null)}>

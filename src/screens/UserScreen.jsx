@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { Modal, Divider } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 
 import Background from '../components/Background';
-import Button from '../components/Button';
-import TextInput from '../components/TextInput';
 import Header from '../components/Header';
 
 import User from '../components/User';
@@ -12,32 +10,10 @@ import storage from '../helper/storage';
 
 export default class UserScreen extends Component {
     state = {
-        newName: '',
-        users: null,
-        visible: false
+        users: null
     };
 
-    fetchFromStorage = () => {
-        storage.getAllDataForKey('users')
-            .then(users => {
-                this.setState({ users: users });
-            })
-            .catch(err => {
-                switch (err.name) {
-                    case 'NotFoundError':
-                        this.setState({ users: {} });
-                }
-            });
-    }
-
-    componentDidMount() {
-        this.props.navigation.addListener('didFocus', this.fetchFromStorage);
-    }
-
-    addUser = () => {
-        if (this.state.newName === '') {
-            return;
-        }
+    findValidID = () => {
         for (let i = 1; i <= 6; i++) {
             let valid = true;
             for (const user of this.state.users) {
@@ -47,54 +23,54 @@ export default class UserScreen extends Component {
                 }
             }
             if (valid) {
-                storage.save({
-                    key: 'users',
-                    id: i,
-                    data: {
-                        id: i,
-                        name: this.state.newName
-                    }
-                }).then(() => {
-                    this.setState({ newName: '', highlightedID: 0, dialogType: 0 });
-                    this.fetchFromStorage();
-                });
-                this.setState({ visible: false });
-                return;
+                return i;
             }
         }
     }
 
-    removeUser = (idx) => {
-        storage.remove({ key: 'users', id: idx })
-            .then(() => {
-                this.fetchFromStorage();
+    fetchFromStorage = () => {
+        storage.getAllDataForKey('users')
+            .then(users => {
+                this.setState({ users: users });
+            })
+            .catch(err => {
+                switch (err.name) {
+                    case 'NotFoundError':
+                        this.setState({ users: [] });
+                }
             });
     }
 
-    switchToSurvey = (idx) => {
-        this.props.navigation.push('Survey', { userid: idx, screen: 0 });
-        // const { users, highlightedID } = this.state;
-        // if (highlightedID != 0) {
-        //     for (const user of users) {
-        //         if (user.id == highlightedID) {
-        //             this.setState({ highlightedID: 0 });
-        //             this.props.navigation.navigate('Survey', { userid: highlightedID });
-        //             return;
-        //         }
-        //     }
-        // }
+    componentDidMount() {
+        this.props.navigation.addListener('didFocus', this.fetchFromStorage);
     }
 
     renderChild = (idx) => {
         const { users } = this.state;
+        const { navigation } = this.props;
         if (idx < users.length) {
             const { id } = users[idx];
             return (
-                <User user={users[idx]} onPress={() => this.switchToSurvey(id)} onLongPress={() => this.removeUser(id)}/>
+                <User 
+                    user={users[idx]}
+                    onPress={() => navigation.push('survey', { userid: idx, screen: 0 })}
+                    onLongPress={() =>
+                        navigation.navigate('profile', {
+                            idx: id,
+                            onGoBack: () => this.fetchFromStorage()
+                        })}
+                />
             );
         } else {
             return (
-                <User user={null} onPress={() => this.setState({ visible: true })}/>
+                <User
+                    user={null}
+                    onPress={() =>
+                        navigation.navigate('profile', {
+                            idx: -this.findValidID(),
+                            onGoBack: () => this.fetchFromStorage()
+                        })}
+                />
             );
         }
     }
@@ -139,28 +115,6 @@ export default class UserScreen extends Component {
                         {this.renderChild(5)}
                     </View>
                 </View>
-                <Modal visible={visible} onDismiss={() => this.setState({ visible: false })} contentContainerStyle={styles.modal}>
-                    <View style={styles.popup}>
-                        <Text>Please input user's nickname</Text>
-                        <TextInput
-                            value={this.state.newName}
-                            label="Nickname"
-                            onChangeText={(text) => this.setState({ newName: text })}
-                        />
-                        <View style={styles.buttonContainer}>
-                            <View style={styles.buttonWrapper}>
-                                <Button mode="outlined" onPress={() => this.addUser()} style={{ width: '90%' }}>
-                                    Add
-                                </Button>
-                            </View>
-                            <View style={styles.buttonWrapper}>
-                                <Button mode="contained" onPress={() => this.setState({ visible: false })} style={{ width: '90%' }}>
-                                    Cancel
-                                </Button>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
             </Background>
         );
     }
