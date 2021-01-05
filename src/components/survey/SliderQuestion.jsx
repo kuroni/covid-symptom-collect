@@ -23,17 +23,17 @@ class SliderQuestion extends Component {
 
     constructor(props) {
         super(props);
-        const { field, dispatch, max, minText, maxText } = this.props;
-        for (let i = 0; i < max; i++) {
-            let text = i + 1;
-            if (i == 0) {
-                text += '\n(' + minText + ')';
-            } else if (i == max - 1) {
-                text += '\n(' + maxText + ')';
+        const { field, dispatch, min, max, minText, maxText } = this.props;
+        for (let i = min; i <= max; i++) {
+            let text = i;
+            if (i == min) {
+                text += '\n' + minText + '';
+            } else if (i == max) {
+                text += '\n' + maxText + '';
             }
             this.state.data.push(text);
         }
-        dispatch(actionCreators.edit({ [field]: 0 }));
+        dispatch(actionCreators.init({ [field]: 0 }));
     }
 
     onPressItem = (value) => {

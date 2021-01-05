@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Text, StyleSheet, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import Background from '../components/Background';
 import Header from '../components/Header';
-
 import User from '../components/User';
-import storage from '../helper/storage';
 
-export default class UserScreen extends Component {
+import storage from '../helper/storage';
+import store, { actionCreators } from '../helper/store';
+import { nextScreen } from '../helper/surveyFlow';
+
+class UserScreen extends Component {
     state = {
         users: null
     };
@@ -45,6 +48,14 @@ export default class UserScreen extends Component {
         this.props.navigation.addListener('didFocus', this.fetchFromStorage);
     }
 
+    beginSurvey = (user) => {
+        console.log(user.answer);
+        const { navigation, dispatch } = this.props;
+        dispatch(actionCreators.clear());
+        dispatch(actionCreators.init(user.answer));
+        navigation.push('survey', { userid: user.id, screen: nextScreen(-1) });
+    }
+
     renderChild = (idx) => {
         const { users } = this.state;
         const { navigation } = this.props;
@@ -53,7 +64,7 @@ export default class UserScreen extends Component {
             return (
                 <User 
                     user={users[idx]}
-                    onPress={() => navigation.push('survey', { userid: idx, screen: 0 })}
+                    onPress={() => this.beginSurvey(users[idx])}
                     onLongPress={() =>
                         navigation.navigate('profile', {
                             idx: id,
@@ -157,3 +168,5 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(0, 0, 0, 0.1)',
     }
 });
+
+export default connect()(UserScreen);

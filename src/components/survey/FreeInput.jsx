@@ -18,7 +18,7 @@ class FreeInput extends Component {
     constructor(props) {
         super(props);
         const { field, dispatch, regex } = this.props;
-        dispatch(actionCreators.edit({ [field]: '' }));
+        dispatch(actionCreators.init({ [field]: '' }));
         this.state = { regex: new RegExp(regex) };
     }
 

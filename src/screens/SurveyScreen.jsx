@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import MultipleChoice from '../components/survey/MultipleChoice';
@@ -10,42 +10,56 @@ import SliderQuestion from '../components/survey/SliderQuestion';
 import store, { actionCreators } from '../helper/store';
 import storage from '../helper/storage';
 import { database } from '../helper/firebaseWrapper';
+import { nextScreen, privatizeResult, screenState } from '../helper/surveyFlow';
 
 import Button from '../components/Button';
 import Background from '../components/Background';
 import Header from '../components/Header';
 import DateChoice from '../components/survey/DateChoice';
+import Dropdown from '../components/survey/Dropdown';
+
+function mapState(state, ownProps) {
+    return {
+        ...ownProps,
+        state: state
+    };
+}
 
 class SurveyScreen extends Component {
     state = {
         last: false,
-        loaded: false
+        loaded: false,
+        state: 0
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps != this.props) {
+            this.fetchFromStorage();
+        }
     }
 
     submit = () => {
         const { dispatch, navigation } = this.props;
-        const { userid } = navigation.state.params;
-        database.collection("userData").add(store.getState());
+        const { userid } = this.props.route.params;
+        database.collection("userData").add(privatizeResult());
         dispatch(actionCreators.clear());
         navigation.goBack();
         navigation.navigate('end');
-        storage.load({ key: 'users', id: userid })
-            .then(ret => storage.save({
-                key: 'users',
-                id: userid,
-                data: ret
-            }));
     }
 
     fetchFromStorage = () => {
-        const { screen } = this.props.navigation.state.params;
+        const { screen } = this.props.route.params;
         storage.load({
             key: 'questionScreens'
-        })
-        .then(ret =>
-            this.setState({ ...ret[screen], last: (screen == ret.length - 1), loaded: true })
-        )
-        .catch(err => {
+        }).then(ret => {
+            const questionScreen = ret[screen];
+            this.setState({
+                ...questionScreen,
+                state: screenState(screen, questionScreen.questions.length),
+                last: (nextScreen(screen) == ret.length),
+                loaded: true
+            });
+        }).catch(err => {
             switch (err.name) {
                 case 'ExpiredError':
                 case 'NotFoundError':
@@ -56,7 +70,7 @@ class SurveyScreen extends Component {
                             storage.save({
                                 key: 'questionScreens',
                                 data: array,
-                                expires: 1000
+                                expires: 1000 * 3600 * 24
                             }).then(() => this.fetchFromStorage());
                         });
                     return;
@@ -73,6 +87,9 @@ class SurveyScreen extends Component {
 
     renderChild = (child, idx) => {
         const { type, field, content } = child;
+        if (((this.state.state >> idx) & 1) == 0) {
+            return <View />;
+        }
         switch (type) {
             case 'freeInput': {
                 const { placeholder, regex } = child;
@@ -101,13 +118,14 @@ class SurveyScreen extends Component {
                 );
             }
             case 'slider': {
-                const { minText, maxText, max } = child;
+                const { minText, maxText, min, max } = child;
                 return (
                     <SliderQuestion
                         content={content}
                         field={field}
                         minText={minText}
                         maxText={maxText}
+                        min={min}
                         max={max}
                         key={idx}
                         style={styles.question}
@@ -124,18 +142,25 @@ class SurveyScreen extends Component {
                     />
                 )
             }
-            // default:
-            //     return (
-            //         <Text>
-            //             {JSON.stringify(child)}
-            //         </Text>
-            //     );
+            case 'dropdown': {
+                const { data, placeholder } = child;
+                return (
+                    <Dropdown
+                        content={content}
+                        field={field}
+                        data={data}
+                        key={idx}
+                        style={styles.question}
+                        placeholder={placeholder}
+                    />
+                );
+            }
         }
     }
 
     finishButton = () => {
         const { navigation } = this.props;
-        const { userid, screen } = navigation.state.params;
+        const { userid, screen } = this.props.route.params;
         if (this.state.last) {
             return (
                 <Button mode='contained' onPress={() => this.submit()}>
@@ -146,7 +171,7 @@ class SurveyScreen extends Component {
             return (
                 <Button
                     mode='contained'
-                    onPress={() => navigation.push('survey', { userid: userid, screen: screen + 1 })}
+                    onPress={() => navigation.push('survey', { userid: userid, screen: nextScreen(screen) })}
                 >
                     Next Questions
                 </Button>
@@ -194,4 +219,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default connect()(SurveyScreen);
+export default connect(mapState)(SurveyScreen);

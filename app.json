@@ -21,6 +21,9 @@
     },
     "web": {
       "favicon": "./assets/icons/favicon.png"
+    },
+    "android": {
+      "package": "com.purdue.covid"
     }
   }
 }

@@ -24,11 +24,10 @@ class DateChoice extends Component {
     constructor(props) {
         super(props);
         const { field, dispatch } = this.props;
-        dispatch(actionCreators.edit({ [field]: new Date() }));
+        dispatch(actionCreators.init({ [field]: new Date() }));
     }
 
     onChangeDate = (date) => {
-        console.log(typeof date);
         const { field, dispatch } = this.props;
         dispatch(actionCreators.edit({ [field]: date }));
         this.setState({ visible: false });

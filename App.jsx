@@ -6,7 +6,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 
 import store from './src/helper/store';
 import storage from './src/helper/storage';
-import RegisterScreen from './src/screens/AuthScreen';
+import ConsentScreen from './src/screens/ConsentScreen';
 import HomeNavigator from './src/navigation/HomeNavigator';
 import AuthContext from './src/helper/context';
 import { theme } from './src/core/theme';
@@ -14,35 +14,45 @@ import { theme } from './src/core/theme';
 export default class App extends Component {
     state = {
         isLoading: true,
-        user: null
+        policy: null
     };
 
-    userChange = (newUser) => {
-        storage.save({ key: 'user', data: newUser });
-        this.setState({ user: newUser });
+    policyChange = (newPolicy) => {
+        storage.save({
+            key: 'policy',
+            data: newPolicy,
+            expires: null
+        });
+        this.setState({ policy: newPolicy });
     }
 
     componentDidMount() {
-        storage.load({ key: 'user' })
-            .then(user => {
-                this.setState({ user, isLoading: false });
+        storage.load({ key: 'policy' })
+            .then(policy => {
+                this.setState({ policy, isLoading: false });
             })
-            .catch(error => {
-                console.error(error);
-                this.setState({ isLoading: false });
+            .catch(err => {
+                switch (err.name) {
+                    case 'ExpiredError':
+                    case 'NotFoundError':
+                        this.setState({ isLoading: false });
+                        return;
+                    default:
+                        console.error(err);
+                }
             });
     }
 
     render() {
-        const { isLoading, user } = this.state;
+        const { isLoading, policy } = this.state;
         if (isLoading) {
             return <View/>;
         }
         return (
-            <AuthContext.Provider value={{ user: user, userChange: (newUser) => this.userChange(newUser) }}>
+            <AuthContext.Provider value={{ policy: policy, policyChange: (newPolicy) => this.policyChange(newPolicy) }}>
                 <StoreProvider store={store}>
                     <PaperProvider theme={theme}>
-                        {user ? <HomeNavigator /> : <RegisterScreen />}
+                        {policy ? <HomeNavigator /> : <ConsentScreen />}
                     </PaperProvider>
                 </StoreProvider>
             </AuthContext.Provider>

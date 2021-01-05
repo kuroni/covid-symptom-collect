@@ -14,6 +14,29 @@ import storage from '../helper/storage'
 import store, { actionCreators } from '../helper/store';
 
 class ProfileScreen extends Component {
+    state = {
+        loaded: false
+    };
+
+    constructor(props) {
+        super(props);
+        const { dispatch } = this.props;
+        dispatch(actionCreators.clear());
+        const { idx } = this.props.route.params;
+        if (idx >= 0) {
+            storage.load({
+                key: 'users',
+                id: idx
+            }).then(user => {
+                dispatch(actionCreators.init(user.answer));
+                dispatch(actionCreators.init({ name: user.name }));
+                this.setState({ loaded: true });
+            });
+        } else {
+            this.state = { loaded: true };
+        }
+    }
+
     saveProfile = (idx) => {
         const { dispatch, navigation } = this.props;
         let userData = store.getState();
@@ -47,50 +70,59 @@ class ProfileScreen extends Component {
     }
 
     render() {
-        console.log(this.props);
         const { idx } = this.props.route.params;
-        return (
-            <Background>
-                <Header>
-                    {idx < 0 ? "Create a new profile" : "Edit the current profile"}
-                </Header>
-                <Divider/>
-                <ScrollView style={styles.surveyView}>
-                    <FreeInput
-                        content="Your nickname"
-                        field="name"
-                        placeholder="Nick name"
-                        style={styles.question}
-                    />
-                    <FreeInput
-                        content="Your postal zip code"
-                        field="zipCode"
-                        placeholder="Zip code"
-                        style={styles.question}
-                    />
-                    <MultipleChoice
-                        content="Your age range"
-                        field="age"
-                        reset={true}
-                        data={["0 - 18", "19 - 30", "30 - 65", ">65", "Prefer not to answer"]}
-                    />
-                </ScrollView>
-                {idx >= 0 ? (
-                    <View>
-                        <Button mode="outlined" onPress={() => this.saveProfile(idx)}>
-                            Save changes
+        if (!this.state.loaded) {
+            return <Background />;
+        } else {
+            return (
+                <Background>
+                    <Header>
+                        {idx < 0 ? "Create a new profile" : "Edit the current profile"}
+                    </Header>
+                    <Divider/>
+                    <ScrollView style={styles.surveyView}>
+                        <FreeInput
+                            content="Your nickname"
+                            field="name"
+                            placeholder="Nick name"
+                            style={styles.question}
+                        />
+                        <FreeInput
+                            content="Your postal zip code"
+                            field="zipCode"
+                            placeholder="Zip code"
+                            style={styles.question}
+                        />
+                        <MultipleChoice
+                            content="Your age range"
+                            field="age"
+                            reset={true}
+                            data={["0 - 5", "19 - 30", "30 - 65", ">65", "Prefer not to answer"]}
+                        />
+                        <MultipleChoice
+                            content="Your biological sex"
+                            field="sex"
+                            reset={true}
+                            data={["I don't want to report", "Male", "Female"]}
+                        />
+                    </ScrollView>
+                    {idx >= 0 ? (
+                        <View>
+                            <Button mode="outlined" onPress={() => this.saveProfile(idx)}>
+                                Save changes
+                            </Button>
+                            <Button mode="contained" onPress={() => this.removeProfile(idx)}>
+                                Delete this profile
+                            </Button>
+                        </View>
+                    ) :(
+                        <Button mode="outlined" onPress={() => this.saveProfile(-idx)}>
+                            Add this profile
                         </Button>
-                        <Button mode="contained" onPress={() => this.removeProfile(idx)}>
-                            Delete this profile
-                        </Button>
-                    </View>
-                ) :(
-                    <Button mode="outlined" onPress={() => this.saveProfile(-idx)}>
-                        Add this profile
-                    </Button>
-                )}
-            </Background>
-        )
+                    )}
+                </Background>
+            );
+        }
     }
 }
 

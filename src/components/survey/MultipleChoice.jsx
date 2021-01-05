@@ -20,7 +20,7 @@ class MultipleChoice extends Component {
     constructor(props) {
         super(props);
         const { field, dispatch } = this.props;
-        dispatch(actionCreators.edit({ [field]: 0 }));
+        dispatch(actionCreators.init({ [field]: 0 }));
     }
 
     onPressItem = (id) => {
