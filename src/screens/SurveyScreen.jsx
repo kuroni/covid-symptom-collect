@@ -11,6 +11,7 @@ import store, { actionCreators } from '../helper/store';
 import storage from '../helper/storage';
 import { database } from '../helper/firebaseWrapper';
 import { nextScreen, privatizeResult, screenState } from '../helper/surveyFlow';
+import { screenStyle } from '../core/theme';
 
 import Button from '../components/Button';
 import Background from '../components/Background';
@@ -183,11 +184,11 @@ class SurveyScreen extends Component {
         if (this.state.loaded) {
             return (
                 <Background>
-                    <Header style={{ padding: 20 }}>
+                    <Header style={screenStyle.header}>
                         {this.state.header}
                     </Header>
                     <Divider/>
-                    <ScrollView style={styles.surveyView}>
+                    <ScrollView style={screenStyle.content}>
                         {this.state.questions.map((child, idx) => this.renderChild(child, idx))}
                     </ScrollView>
                     {this.finishButton()}
@@ -211,10 +212,6 @@ const styles = StyleSheet.create({
     question: {
         padding: 20,
         flex: 1
-    },
-    surveyView: {
-        alignContent: 'flex-start',
-        width: '100%'
     }
 });
 

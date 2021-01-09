@@ -26,7 +26,7 @@ export default class ConsentScreen extends Component {
 
     render() {
         const { confirmed } = this.state;
-        const docLink = 'https://drive.google.com/file/d/14iby0yg4lHvSovDn-ysr5O8AB1g5soQP/view';
+        const docLink = 'https://www.cs.purdue.edu/ppsrc-project/covid-sympton/privacy_consent.pdf';
         return (
             <AuthContext.Consumer>
                 {({ policyChange }) => (
@@ -45,7 +45,7 @@ export default class ConsentScreen extends Component {
                         </View>
                         <Checkbox.Item
                             status={confirmed ? 'checked' : 'unchecked'}
-                            onPress={() => this.setState({ confirmed: !confirmed})}
+                            onPress={() => this.setState({ confirmed: !confirmed })}
                             label='I confirm the above'
                             labelStyle={styles.labelStyle}
                         />

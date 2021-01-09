@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, ScrollView } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import Background from '../components/Background';
@@ -10,6 +10,7 @@ import User from '../components/User';
 import storage from '../helper/storage';
 import store, { actionCreators } from '../helper/store';
 import { nextScreen } from '../helper/surveyFlow';
+import { screenStyle } from '../core/theme';
 
 class UserScreen extends Component {
     state = {
@@ -98,10 +99,9 @@ class UserScreen extends Component {
         }
         return (
             <Background>
-                <Header>
+                <Header style={screenStyle.header}>
                     Please select a family member
                 </Header>
-                <Divider/>
                 <View style={styles.userRow}>
                     <View style={styles.userColumn}>
                         {this.renderChild(0)}
