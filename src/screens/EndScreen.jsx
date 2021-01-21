@@ -23,9 +23,9 @@ export default class EndScreen extends Component {
                 <Button mode="contained" onPress={() => navigation.navigate('home')}>
                     Go to Home
                 </Button>
-                <Button mode="contained" onPress={() => navigation.navigate('result')}>
+                {/* <Button mode="contained" onPress={() => navigation.navigate('result')}>
                     Show data summary
-                </Button>
+                </Button> */}
             </Background>
         );
     }

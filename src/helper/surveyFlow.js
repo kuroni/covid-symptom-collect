@@ -7,6 +7,14 @@ export function screenState(currentScreen, questionCount) {
             if ('isTest' in currentState && currentState['isTest'] == 1) {
                 return (1 << questionCount) - 1;
             } else {
+                return 17;
+            }
+        }
+        case 6:{
+            const currentState = store.getState();
+            if ('isVaccine' in currentState && currentState['isVaccine'] == 1) {
+                return (1 << questionCount) - 1;
+            } else {
                 return 1;
             }
         }

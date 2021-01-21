@@ -107,11 +107,11 @@ class ProfileScreen extends Component {
                         />
                     </ScrollView>
                     {idx >= 0 ? (
-                        <View>
+                        <View style={{ width: '100%' }}>
                             <Button mode="outlined" onPress={() => this.saveProfile(idx)}>
                                 Save changes
                             </Button>
-                            <Button mode="contained" onPress={() => this.removeProfile(idx)}>
+                            <Button mode="contained" style={{ backgroundColor: 'red' }} onPress={() => this.removeProfile(idx)}>
                                 Delete this profile
                             </Button>
                         </View>

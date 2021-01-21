@@ -42,7 +42,7 @@ function HomeTabNavigator() {
                     )
                 }}
             />
-            <Tab.Screen
+            {/* <Tab.Screen
                 name="data"
                 component={ResultScreen}
                 options={{
@@ -51,7 +51,7 @@ function HomeTabNavigator() {
                         <Icon name="database" color={color} size={24} />
                     )
                 }}
-            />
+            /> */}
             <Tab.Screen
                 name="settings"
                 component={SettingsScreen}
@@ -85,7 +85,7 @@ function StackNavigator() {
             <Stack.Screen name="profile" component={ProfileScreen} />
             <Stack.Screen name="survey" component={SurveyScreen} />
             <Stack.Screen name="end" component={EndScreen} />
-            <Stack.Screen name="result" component={ResultScreen} />
+            {/* <Stack.Screen name="result" component={ResultScreen} /> */}
         </Stack.Navigator>
     );
 }
