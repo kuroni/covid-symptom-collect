@@ -23,7 +23,8 @@
       "favicon": "./assets/icons/favicon.png"
     },
     "android": {
-      "package": "com.purdue.covid"
+      "package": "com.purdue.covid",
+      "permissions": []
     }
   }
 }

@@ -56,9 +56,9 @@ function HomeTabNavigator() {
                 name="settings"
                 component={SettingsScreen}
                 options={{
-                    tabBarLabel: 'Settings',
+                    tabBarLabel: 'About us',
                     tabBarIcon: ({ color, size }) => (
-                        <Icon name="settings" color={color} size={24} />
+                        <Icon name="information" color={color} size={24} />
                     )
                 }}
             />
