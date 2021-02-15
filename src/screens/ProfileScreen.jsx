@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { Divider } from 'react-native-paper';
+import AnimatedLoader from 'react-native-animated-loader';
 
 import MultipleChoice from '../components/survey/MultipleChoice';
 import FreeInput from '../components/survey/FreeInput';
+import Dropdown from '../components/survey/Dropdown';
 
 import Header from '../components/Header';
 import Background from '../components/Background';
@@ -72,7 +74,17 @@ class ProfileScreen extends Component {
     render() {
         const { idx } = this.props.route.params;
         if (!this.state.loaded) {
-            return <Background />;
+            return (
+                <Background>
+                    <AnimatedLoader
+                    overlayColor="rgba(0,0,0,0)"
+                        visible={true}
+                        source={require("../assets/loading.json")}
+                        animationStyle={styles.lottie}
+                        speed={1}
+                    />
+                </Background>
+            );
         } else {
             return (
                 <Background>
@@ -93,17 +105,35 @@ class ProfileScreen extends Component {
                             placeholder="Zip code"
                             style={styles.question}
                         />
-                        <MultipleChoice
+                        <Dropdown
                             content="Your age range"
                             field="age"
-                            reset={true}
-                            data={["0 - 5", "19 - 30", "30 - 65", ">65", "Prefer not to answer"]}
+                            data={["0 - 5",
+                                    "6 - 10",
+                                    "11 - 15",
+                                    "16 - 20",
+                                    "21 - 25",
+                                    "26 - 30",
+                                    "31 - 35",
+                                    "36 - 40",
+                                    "41 - 45",
+                                    "46 - 50",
+                                    "51 - 55",
+                                    "56 - 60",
+                                    "61 - 65",
+                                    "66 - 70",
+                                    "71 - 75",
+                                    "> 75",
+                                    "Prefer not to answer"]}
+                            style={styles.question}
+                            placeholder="Age"
                         />
                         <MultipleChoice
                             content="Your biological sex"
                             field="sex"
                             reset={true}
                             data={["I don't want to report", "Male", "Female"]}
+                            style={styles.question}
                         />
                     </ScrollView>
                     {idx >= 0 ? (
@@ -136,5 +166,9 @@ const styles = StyleSheet.create({
     surveyView: {
         alignContent: 'flex-start',
         width: '100%'
+    },
+    lottie: {
+        width: 300,
+        height: 300
     }
 });

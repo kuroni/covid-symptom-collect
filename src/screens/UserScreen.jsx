@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text, StyleSheet, View, ScrollView } from 'react-native';
-import { Divider } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import AnimatedLoader from 'react-native-animated-loader';
 
 import Background from '../components/Background';
 import Header from '../components/Header';
@@ -50,7 +50,6 @@ class UserScreen extends Component {
     }
 
     beginSurvey = (user) => {
-        console.log(user.answer);
         const { navigation, dispatch } = this.props;
         dispatch(actionCreators.clear());
         dispatch(actionCreators.init(user.answer));
@@ -92,9 +91,15 @@ class UserScreen extends Component {
         if (!users) {
             this.fetchFromStorage();
             return (
-                <Text>
-                    Loading...
-                </Text>
+                <Background>
+                    <AnimatedLoader
+                        overlayColor="rgba(0,0,0,0)"
+                        visible={true}
+                        source={require("../assets/loading.json")}
+                        animationStyle={styles.lottie}
+                        speed={1}
+                    />
+                </Background>
             );
         }
         return (

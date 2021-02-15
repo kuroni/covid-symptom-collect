@@ -2,7 +2,7 @@
   "expo": {
     "name": "covid-symptom-collect",
     "slug": "covid-symptom-collect",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "splash": {
@@ -23,7 +23,7 @@
       "favicon": "./assets/icons/favicon.png"
     },
     "android": {
-      "package": "com.purdue.covid",
+      "package": "com.ppsrc.covid",
       "permissions": []
     }
   }

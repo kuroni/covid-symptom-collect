@@ -23,10 +23,8 @@ export default class SettingsScreen extends Component {
                     <Background>
                         <Logo />
                         <View style={{ width: '100%' }}>
-                            <List.Section title="About us">
-
-                            </List.Section>
-                            <Divider />
+                            <List.Section title="About us"/>
+                            <Divider/>
                             <List.Item
                                 title="Privacy policy"
                                 left={props => <List.Icon {...props} icon="folder-key" />}
@@ -36,6 +34,13 @@ export default class SettingsScreen extends Component {
                                 title="Website version"
                                 left={props => <List.Icon {...props} icon="earth" />}
                                 onPress={() => this.clickOnLink('https://www.cs.purdue.edu/ppsrc-project/covid-sympton/survey.html')}
+                            />
+                            <List.Section title="Other links"/>
+                            <Divider/>
+                            <List.Item
+                                title="CDC guidelines"
+                                left={props => <List.Icon {...props} icon="format-list-bulleted" />}
+                                onPress={() => this.clickOnLink('https://www.cdc.gov/coronavirus/2019-ncov/index.html')}
                             />
                         </View>
                     </Background>

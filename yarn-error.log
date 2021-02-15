@@ -3943,13 +3943,6 @@ Lockfile:
       qs "^6.5.0"
       url-parse "^1.4.4"
   
-  expo-location@~8.2.1:
-    version "8.2.1"
-    resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-8.2.1.tgz#5ea6bfd3d211939117416da151f1384caa15e0db"
-    integrity sha512-MixKapt3nijAxyjIISscBzdKi8bwh0H/dWYsL2mCofrjguFHOh2gP07h95902lekb7NVqybl5AIQRW5cvrG4rQ==
-    dependencies:
-      invariant "^2.2.4"
-  
   expo-permissions@~9.0.1:
     version "9.0.1"
     resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-9.0.1.tgz#dc10b58654bbe39bbbed5827369942b01b08055e"
@@ -3995,7 +3988,6 @@ Lockfile:
       expo-keep-awake "~8.2.1"
       expo-linear-gradient "~8.2.1"
       expo-linking "~1.0.3"
-      expo-location "~8.2.1"
       expo-permissions "~9.0.1"
       expo-splash-screen "^0.5.0"
       expo-sqlite "~8.2.1"

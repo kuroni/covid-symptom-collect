@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Divider } from 'react-native-paper';
+import { Text, Divider } from 'react-native-paper';
+import AnimatedLoader from 'react-native-animated-loader';
 
 import MultipleChoice from '../components/survey/MultipleChoice';
 import FreeInput from '../components/survey/FreeInput';
@@ -29,7 +30,7 @@ function mapState(state, ownProps) {
 class SurveyScreen extends Component {
     state = {
         last: false,
-        loaded: false,
+        loaded: 0,
         state: 0
     }
 
@@ -48,42 +49,75 @@ class SurveyScreen extends Component {
         navigation.navigate('end');
     }
 
-    fetchFromStorage = () => {
+    fetchFromStorage = async () => {
         const { screen } = this.props.route.params;
-        storage.load({
-            key: 'questionScreens'
-        }).then(ret => {
+        try {
+            const ret = await storage.load({
+                key: 'questionScreens'
+            });
             const questionScreen = ret[screen];
             this.setState({
                 ...questionScreen,
                 state: screenState(screen, questionScreen.questions.length),
                 last: (nextScreen(screen) == ret.length),
-                loaded: true
+                loaded: 1
             });
-        }).catch(err => {
+            return new Promise((resolve, reject) => {
+                resolve(true);
+            });
+        } catch (err) {
             switch (err.name) {
                 case 'ExpiredError':
                 case 'NotFoundError':
-                    database.collection('questionScreens').orderBy("screen", "asc").get()
-                        .then(snapshot => {
-                            let array = [];
-                            snapshot.forEach(doc => array.push(doc.data()));
-                            storage.save({
-                                key: 'questionScreens',
-                                data: array,
-                                expires: 1000 * 3600 * 24
-                            }).then(() => this.fetchFromStorage());
+                    try {
+                        const snapshot = await database.collection('questionScreens').orderBy("screen", "asc").get();
+                        let array = [];
+                        snapshot.forEach(doc => array.push(doc.data()));
+                        await storage.save({
+                            key: 'questionScreens',
+                            data: array,
+                            expires: 1000 * 3600 * 24
                         });
-                    return;
+                        try {
+                            await this.fetchFromStorage();
+                            return new Promise((resolve, reject) => {
+                                resolve(true);
+                            });
+                        } catch (error) {
+                            return new Promise((resolve, reject) => {
+                                reject(error);
+                            });
+                        }
+                    } catch (error) {
+                        return new Promise((resolve, reject) => {
+                            reject(error);
+                        });
+                    }
                 default:
-                    console.error(err);
-                    throw 'oh no';
+                    return new Promise((resolve, reject) => {
+                        reject(error);
+                    });
             }
-        })
+        }
     }
 
     componentDidMount() {
-        this.fetchFromStorage();
+        const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(reject, 7 * 1000, 'time limit exceeded');
+        });
+
+        const fetchPromise = new Promise((resolve, reject) => {
+            resolve(this.fetchFromStorage());
+        })
+        Promise.race([fetchPromise, timeoutPromise])
+            .then(ret => {
+                console.log(ret);
+                return;
+            })
+            .catch(err => {
+                console.error(err);
+                this.setState({ loaded: 2 });
+            });
     }
 
     renderChild = (child, idx) => {
@@ -181,7 +215,7 @@ class SurveyScreen extends Component {
     }
 
     render() {
-        if (this.state.loaded) {
+        if (this.state.loaded == 1) {
             return (
                 <Background>
                     <Header style={screenStyle.header}>
@@ -194,9 +228,25 @@ class SurveyScreen extends Component {
                     {this.finishButton()}
                 </Background>
             );
+        } else if (this.state.loaded == 0) {
+            return (
+                <Background>
+                    <AnimatedLoader
+                        overlayColor="rgba(0,0,0,0)"
+                        visible={true}
+                        source={require("../assets/loading.json")}
+                        animationStyle={styles.lottie}
+                        speed={1}
+                    />
+                </Background>
+            );
         } else {
             return (
-                <Background/>
+                <Background>
+                    <Text style={styles.outerText}>
+                        Cannot fetch survey questions. Please check your Internet connection.
+                    </Text>
+                </Background>
             );
         }
     }
@@ -212,6 +262,13 @@ const styles = StyleSheet.create({
     question: {
         padding: 20,
         flex: 1
+    },
+    outerText: {
+        fontSize: 16,
+    },
+    lottie: {
+        width: 300,
+        height: 300
     }
 });
 

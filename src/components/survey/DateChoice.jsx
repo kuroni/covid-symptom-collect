@@ -28,27 +28,27 @@ class DateChoice extends Component {
     }
 
     onChangeDate = (date) => {
+        this.setState({ visible: false });
         const { field, dispatch } = this.props;
         dispatch(actionCreators.edit({ [field]: date }));
-        this.setState({ visible: false });
     }
 
     render() {
         const { content, answer } = this.props;
         const { visible } = this.state;
-        
+
         if (answer === undefined) {
             this.onChangeDate(new Date());
-            return <View/>;
+            return <View />;
         }
 
         return (
             <View style={this.props.style}>
-                <Question content={content}/>
+                <Question content={content} />
                 <TouchableRipple onPress={() => this.setState({ visible: true })}>
                     <View pointerEvents="none">
                         <TextInput
-                            value={answer.toISOString().substring(0, 10)}
+                            value={answer.toLocaleDateString()}
                         />
                     </View>
                 </TouchableRipple>
